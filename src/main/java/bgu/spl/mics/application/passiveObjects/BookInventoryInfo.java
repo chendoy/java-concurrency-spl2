@@ -8,6 +8,21 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class BookInventoryInfo {
 
+	String bookTitle;
+	int amountInInventory;
+	int price;
+
+	/**
+	 * Basic constructor for BookInventoryInfo that takes trivial parameters
+	 */
+
+	public BookInventoryInfo(String bookTitle, int price)
+	{
+		this.bookTitle=bookTitle;
+		this.amountInInventory=1;
+		this.price=price;
+	}
+
 	/**
      * Retrieves the title of this book.
      * <p>
