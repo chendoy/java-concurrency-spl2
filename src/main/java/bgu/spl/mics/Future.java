@@ -1,66 +1,75 @@
 package bgu.spl.mics;
 
+
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A Future object represents a promised result - an object that will
- * eventually be resolved to hold a result of some operation. The class allows
- * Retrieving the result once it is available.
+ * A Future object represents a promised objectResult - an object that will
+ * eventually be resolved to hold a objectResult of some operation. The class allows
+ * Retrieving the objectResult once it is available.
  * 
  * Only private methods may be added to this class.
  * No public constructor is allowed except for the empty constructor.
  */
 public class Future<T> {
+	private AtomicReference<T> objectResult=null;
 	
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		//TODO: implement this
 	}
 	
 	/**
-     * retrieves the result the Future object holds if it has been resolved.
+     * retrieves the objectResult the Future object holds if it has been resolved.
      * This is a blocking method! It waits for the computation in case it has
      * not been completed.
      * <p>
-     * @return return the result of type T if it is available, if not wait until it is available.
+     * @return return the objectResult of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() {
-		//TODO: implement this.
-		return null;
+	public synchronized AtomicReference<T> get() {
+		while(!isDone())
+			try{this.wait();} catch (InterruptedException exp){}
+		return objectResult;
 	}
 	
 	/**
-     * Resolves the result of this Future object.
+     * Resolves the objectResult of this Future object.
      */
-	public void resolve (T result) {
-		//TODO: implement this.
+	//synchronized necessary here??
+	public  void resolve (T result) {
+		objectResult.compareAndSet(null,result);
+		notifyAll();
 	}
 	
 	/**
      * @return true if this object has been resolved, false otherwise
      */
+	//synchronized necessary here??
 	public boolean isDone() {
-		//TODO: implement this.
-		return false;
+		return !objectResult.compareAndSet(null,null);
 	}
 	
 	/**
-     * retrieves the result the Future object holds if it has been resolved,
+     * retrieves the objectResult the Future object holds if it has been resolved,
      * This method is non-blocking, it has a limited amount of time determined
      * by {@code timeout}
      * <p>
-     * @param timout 	the maximal amount of time units to wait for the result.
      * @param unit		the {@link TimeUnit} time units to wait.
-     * @return return the result of type T if it is available, if not, 
+     * @return return the objectResult of type T if it is available, if not,
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
      */
-	public T get(long timeout, TimeUnit unit) {
-		//TODO: implement this.
-		return null;
+	public AtomicReference<T> get(long timeout, TimeUnit unit) {
+		long timeExpired=System.currentTimeMillis()+unit.toMillis(timeout);
+		while(!isDone()) {
+			long waitMs = timeExpired - System.currentTimeMillis();
+			if(waitMs<=0)
+				return null;
+		}
+		return objectResult;
 	}
 
 }
