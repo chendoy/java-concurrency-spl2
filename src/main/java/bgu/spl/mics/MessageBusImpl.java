@@ -2,8 +2,7 @@ package bgu.spl.mics;
 
 import java.util.HashMap;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -12,7 +11,9 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private HashMap<MicroService, BlockingQueue<Message>> QueueMap;
+	private ConcurrentHashMap<MicroService, ConcurrentLinkedDeque<Class<? extends Message>>> QueueMap;
+	private ConcurrentHashMap<Message, ConcurrentLinkedDeque<MicroService>> SubscriptionsMap ;
+
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance =new MessageBusImpl();
@@ -20,7 +21,8 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	private MessageBusImpl() {
-		QueueMap=new HashMap<>();
+		QueueMap=new ConcurrentHashMap<>();
+		SubscriptionsMap=new ConcurrentHashMap<>();
 	}
 
 	public static MessageBusImpl getInstance() {
@@ -30,26 +32,23 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		// TODO Auto-generated method stub
-
+		SubscriptionsMap.get(type).add(m);
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		// TODO Auto-generated method stub
-
+		SubscriptionsMap.get(type).add(m);
 	}
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		// TODO Auto-generated method stub
-
+		ConcurrentLinkedDeque<MicroService> bSubscriptionsQueue=SubscriptionsMap.get(b);
+		for(MicroService ms:bSubscriptionsQueue)
+			ms.sendBroadcast(b);
 	}
 
 	
