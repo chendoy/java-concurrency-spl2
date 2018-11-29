@@ -11,18 +11,21 @@ import java.util.concurrent.*;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private ConcurrentHashMap<MicroService, ConcurrentLinkedDeque<Class<? extends Message>>> QueueMap;
-	private ConcurrentHashMap<Message, ConcurrentLinkedDeque<MicroService>> SubscriptionsMap ;
+	private ConcurrentHashMap<MicroService, BlockingQueue<Message>> QueueMap;
+	private ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>> SubscriptionsMap ;
+	private ConcurrentHashMap<Message,MicroService> messageToMicroServiceMap ;
+	private ConcurrentHashMap<Message,Future> messageToFutureMap;
 
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance =new MessageBusImpl();
-
 	}
 
 	private MessageBusImpl() {
 		QueueMap=new ConcurrentHashMap<>();
 		SubscriptionsMap=new ConcurrentHashMap<>();
+		messageToMicroServiceMap=new ConcurrentHashMap<>();
+		messageToMicroServiceMap=new ConcurrentHashMap<>();
 	}
 
 	public static MessageBusImpl getInstance() {
@@ -33,25 +36,34 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		SubscriptionsMap.get(type).add(m);
+
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		SubscriptionsMap.get(type).add(m);
+
 	}
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
+		QueueMap.get(messageToMicroServiceMap.get(e)).remove();
+
 	}
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		ConcurrentLinkedDeque<MicroService> bSubscriptionsQueue=SubscriptionsMap.get(b);
-		for(MicroService ms:bSubscriptionsQueue)
-			ms.sendBroadcast(b);
-	}
+		BlockingQueue<MicroService> bSubscriptionsQueue=SubscriptionsMap.get(b);
+		for(MicroService ms:bSubscriptionsQueue) {
+			{
+				try {
+					QueueMap.get(ms).put(b);
+				} catch (InterruptedException exp) {
+				}
+			}
+		}
 
-	
+	}
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
 		// TODO Auto-generated method stub
@@ -60,7 +72,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		BlockingQueue<Message> mQueue=new LinkedBlockingDeque<>();
+		ConcurrentLinkedDeque<Class<? extends Message>> mQueue=new ConcurrentLinkedDeque<>();
 		QueueMap.put(m,mQueue);
 	}
 
