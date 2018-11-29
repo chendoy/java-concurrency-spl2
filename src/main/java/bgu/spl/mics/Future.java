@@ -29,17 +29,17 @@ public class Future<T> {
      * @return return the objectResult of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public synchronized AtomicReference<T> get() {
+	public synchronized T get() {
 		while(!isDone())
 			try{this.wait();} catch (InterruptedException exp){}
-		return objectResult;
+		return objectResult.get();
 	}
 	
 	/**
      * Resolves the objectResult of this Future object.
      */
 	//synchronized necessary here??
-	public  void resolve (T result) {
+	public synchronized void resolve (T result) {
 		objectResult.compareAndSet(null,result);
 		notifyAll();
 	}
