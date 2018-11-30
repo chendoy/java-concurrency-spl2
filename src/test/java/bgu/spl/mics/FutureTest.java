@@ -1,8 +1,6 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.services.TimeService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.junit.Before;
+
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;

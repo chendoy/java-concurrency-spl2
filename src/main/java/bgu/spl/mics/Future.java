@@ -62,14 +62,14 @@ public class Future<T> {
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
      */
-	public AtomicReference<T> get(long timeout, TimeUnit unit) {
+	public T get(long timeout, TimeUnit unit) {
 		long timeExpired=System.currentTimeMillis()+unit.toMillis(timeout);
 		while(!isDone()) {
 			long waitMs = timeExpired - System.currentTimeMillis();
 			if(waitMs<=0)
 				return null;
 		}
-		return objectResult;
+		return objectResult.get();
 	}
 
 }
