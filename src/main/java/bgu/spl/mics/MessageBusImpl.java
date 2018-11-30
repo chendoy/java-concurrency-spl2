@@ -38,13 +38,11 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		BlockingQueue<MicroService>event_Subscribers=SubscriptionsMap.get(type);
-		if(event_Subscribers!=null) {
-			event_Subscribers.add(m);
-		} else {
-			event_Subscribers=new LinkedBlockingQueue<>();
-			event_Subscribers.add(m);
+		if(event_Subscribers==null) {
+			event_Subscribers = new LinkedBlockingQueue<>();
+			SubscriptionsMap.put(type,event_Subscribers);
 		}
-
+		event_Subscribers.add(m);
 	}
 
 	@Override
@@ -56,13 +54,12 @@ public class MessageBusImpl implements MessageBus {
 			SubscriptionsMap.put(type, broadCast_Subscribers);
 		}
 		broadCast_Subscribers.add(m);
-
 	}
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
 		MicroService microService = messageToMicroServiceMap.get(e);
-		QueueMap.get(microService).poll();
+		//QueueMap.get(microService).poll();
 		messageToMicroServiceMap.remove(e);
 		messageToFutureMap.get(e).resolve(result);
 		messageToFutureMap.remove(e);
@@ -137,6 +134,7 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		while(m_Queue.isEmpty())
 			this.wait();
+			//should be poll or peek? need to resolve it
 			return m_Queue.poll();
 
 	}
