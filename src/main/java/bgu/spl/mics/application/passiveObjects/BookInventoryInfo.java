@@ -24,36 +24,36 @@ public class BookInventoryInfo {
 	}
 
 	/**
-     * Retrieves the title of this book.
-     * <p>
-     * @return The title of this book.   
-     */
+	 * Retrieves the title of this book.
+	 * <p>
+	 * @return The title of this book.
+	 */
 	public String getBookTitle() {
 		// TODO Implement this
 		return null;
 	}
 
 	/**
-     * Retrieves the amount of books of this type in the inventory.
-     * <p>
-     * @return amount of available books.      
-     */
+	 * Retrieves the amount of books of this type in the inventory.
+	 * <p>
+	 * @return amount of available books.
+	 */
 	public int getAmountInInventory() {
 		// TODO Implement this
 		return 0;
 	}
 
 	/**
-     * Retrieves the price for  book.
-     * <p>
-     * @return the price of the book.
-     */
+	 * Retrieves the price for  book.
+	 * <p>
+	 * @return the price of the book.
+	 */
 	public int getPrice() {
 		// TODO Implement this
 		return 0;
 	}
-	
-	
 
-	
+
+
+
 }

@@ -14,8 +14,6 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Inventory {
 
-	enum OrderResult {NOT_IN_STOCK, SUCCESSFULLY_TAKEN}
-
 	/**
      * Retrieves the single instance of this class.
      */
@@ -31,7 +29,7 @@ public class Inventory {
      * @param inventory 	Data structure containing all data necessary for initialization
      * 						of the inventory.
      */
-	public void load (BookInventoryInfo[] inventory ) {
+	public void load (BookInventoryInfo[ ] inventory ) {
 		
 	}
 	
