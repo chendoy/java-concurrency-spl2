@@ -50,12 +50,12 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		BlockingQueue<MicroService> broadCast_Subscribers=SubscriptionsMap.get(type);
-		if(broadCast_Subscribers!=null) {
-			broadCast_Subscribers.add(m);
-		} else {
-			broadCast_Subscribers=new LinkedBlockingQueue<>();
-			broadCast_Subscribers.add(m);
+
+		if(broadCast_Subscribers==null) {
+			broadCast_Subscribers = new LinkedBlockingQueue<>();
+			SubscriptionsMap.put(type, broadCast_Subscribers);
 		}
+		broadCast_Subscribers.add(m);
 
 	}
 
@@ -74,10 +74,9 @@ public class MessageBusImpl implements MessageBus {
 		if(bSubscriptionsQueue!=null) {
 			for (MicroService ms : bSubscriptionsQueue) {
 				{
-					try {
-						QueueMap.get(ms).put(b);
-					} catch (InterruptedException exp) {
-					}
+					BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
+					ms_Queue.add(b);
+					String hi="";
 				}
 			}
 			notifyAll();
@@ -138,7 +137,7 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		while(m_Queue.isEmpty())
 			this.wait();
-		return m_Queue.peek();
+			return m_Queue.poll();
 
 	}
 	private boolean isRegistered(MicroService m) {
