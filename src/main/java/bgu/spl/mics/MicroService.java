@@ -159,7 +159,7 @@ public abstract class MicroService implements Runnable {
             try
             {
                 Message m=MessageBusImpl.getInstance().awaitMessage(this);
-                EventCallBackMap.get(m).call(m);
+                EventCallBackMap.get(m.getClass()).call(m);
             }
             catch (InterruptedException exp) {System.out.println("thread "+Thread.currentThread().getId()+" interrupted me");}
         }
