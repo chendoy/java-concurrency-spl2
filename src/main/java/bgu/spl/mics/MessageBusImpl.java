@@ -37,12 +37,26 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		SubscriptionsMap.get(type).add(m);
+		BlockingQueue<MicroService>event_Subscribers=SubscriptionsMap.get(type);
+		if(event_Subscribers!=null) {
+			event_Subscribers.add(m);
+		} else {
+			event_Subscribers=new LinkedBlockingQueue<>();
+			event_Subscribers.add(m);
+		}
+
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		SubscriptionsMap.get(type).add(m);
+		BlockingQueue<MicroService> broadCast_Subscribers=SubscriptionsMap.get(type);
+		if(broadCast_Subscribers!=null) {
+			broadCast_Subscribers.add(m);
+		} else {
+			broadCast_Subscribers=new LinkedBlockingQueue<>();
+			broadCast_Subscribers.add(m);
+		}
+
 	}
 
 	@Override
@@ -57,21 +71,23 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public synchronized void sendBroadcast(Broadcast b) {
 		BlockingQueue<MicroService> bSubscriptionsQueue=SubscriptionsMap.get(b.getClass());
-		for(MicroService ms:bSubscriptionsQueue) {
-			{
-				try {
-					QueueMap.get(ms).put(b);
-				} catch (InterruptedException exp) {
+		if(bSubscriptionsQueue!=null) {
+			for (MicroService ms : bSubscriptionsQueue) {
+				{
+					try {
+						QueueMap.get(ms).put(b);
+					} catch (InterruptedException exp) {
+					}
 				}
 			}
+			notifyAll();
 		}
-		notifyAll();
 	}
 	@Override
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 
 		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
-		if(!candidates_ms.isEmpty()) {
+		if(candidates_ms!=null) {
             MicroService ms=candidates_ms.poll();
             Future<T> future=null;
             try
