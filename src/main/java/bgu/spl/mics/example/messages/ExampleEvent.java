@@ -6,7 +6,8 @@ public class ExampleEvent implements Event<String>{
 
     private String senderName;
 
-    public ExampleEvent(String senderName) {
+    public ExampleEvent(String senderName)
+    {
         this.senderName = senderName;
     }
 

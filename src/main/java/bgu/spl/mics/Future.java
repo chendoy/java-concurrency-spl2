@@ -13,12 +13,13 @@ import java.util.concurrent.atomic.AtomicReference;
  * No public constructor is allowed except for the empty constructor.
  */
 public class Future<T> {
-	private AtomicReference<T> objectResult=null;
+	private AtomicReference<T> objectResult=new AtomicReference<>();
 	
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
+		//objectResult.set(null);
 	}
 	
 	/**
@@ -63,11 +64,13 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
+		System.out.println("timeout loop initiated");
 		long timeExpired=System.currentTimeMillis()+unit.toMillis(timeout);
 		while(!isDone()) {
 			long waitMs = timeExpired - System.currentTimeMillis();
-			if(waitMs<=0)
+			if(waitMs<=0) {
 				return null;
+			}
 		}
 		return objectResult.get();
 	}
