@@ -69,21 +69,29 @@ public class MessageBusImpl implements MessageBus {
 	}
 	@Override
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
-		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
-		MicroService ms=candidates_ms.poll();
-		Future<T> future=null;
-		try
-		{
-			candidates_ms.put(ms);
-			future=new Future<>();
-			messageToFutureMap.put(e,future);
-		}
-		catch (InterruptedException ex) {}
 
-		BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
-		ms_Queue.add(e);
-		notifyAll();
-		return future;
+		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
+		if(!candidates_ms.isEmpty()) {
+            MicroService ms=candidates_ms.poll();
+            Future<T> future=null;
+            try
+            {
+                candidates_ms.put(ms);
+                future=new Future<>();
+                messageToFutureMap.put(e,future);
+            }
+            catch (InterruptedException ex) {}
+
+            BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
+            ms_Queue.add(e);
+            notifyAll();
+            return future;
+        }
+		else {
+		    return null;
+        }
+
+
 	}
 
 	@Override
