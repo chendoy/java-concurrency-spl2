@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Passive data-object representing the store inventory.
@@ -14,12 +16,21 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class Inventory {
 
-	/**
+	private ConcurrentHashMap<Integer,BookInventoryInfo> booksList;
+
+	private static class InventoryHolder {
+		private static Inventory instance = new Inventory();
+	}
+
+	private Inventory() {
+		booksList=new ConcurrentHashMap<>();
+	}
+
+		/**
      * Retrieves the single instance of this class.
      */
 	public static Inventory getInstance() {
-		//TODO: Implement this
-		return null;
+		return InventoryHolder.instance;
 	}
 	
 	/**

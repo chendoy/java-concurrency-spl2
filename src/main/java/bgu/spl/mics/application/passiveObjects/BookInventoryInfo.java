@@ -15,7 +15,7 @@ public class BookInventoryInfo {
 	/**
 	 * Basic constructor for BookInventoryInfo that takes trivial parameters
 	 */
-	public BookInventoryInfo(String bookTitle, int price)
+	public BookInventoryInfo(String bookTitle, int amount, int price)
 	{
 		this.bookTitle=bookTitle;
 		this.amountInInventory=1;
