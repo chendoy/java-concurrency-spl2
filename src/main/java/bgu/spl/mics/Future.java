@@ -31,6 +31,7 @@ public class Future<T> {
      * 	       
      */
 	public synchronized T get() {
+
 		while(!isDone())
 			try{this.wait();} catch (InterruptedException exp){}
 		return objectResult.get();

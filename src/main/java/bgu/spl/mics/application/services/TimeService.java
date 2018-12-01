@@ -1,6 +1,9 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.Inventory;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 
 /**
  * TimeService is the global system timer There is only one instance of this micro-service.
@@ -14,9 +17,27 @@ import bgu.spl.mics.MicroService;
  */
 public class TimeService extends MicroService{
 
-	public TimeService() {
+	private ResourceService resourceService;
+	private MoneyRegister moneyRegister;
+	private Inventory inventory;
+
+	private static class TimeServiceHolder{
+		private static TimeService instance =new TimeService();
+	}
+
+	public static TimeService getInstance() {
+		return TimeService.TimeServiceHolder.instance;
+	}
+
+
+	private TimeService() {
 		super("Change_This_Name");
 		// TODO Implement this
+	}
+
+	//to implement this
+	public int getCurrentTick() {
+		return -5;
 	}
 
 	@Override

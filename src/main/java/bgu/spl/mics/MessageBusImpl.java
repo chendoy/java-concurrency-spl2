@@ -1,8 +1,6 @@
 package bgu.spl.mics;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Queue;
 import java.util.concurrent.*;
 
 /**
@@ -73,7 +71,6 @@ public class MessageBusImpl implements MessageBus {
 				{
 					BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
 					ms_Queue.add(b);
-					String hi="";
 				}
 			}
 			notifyAll();
@@ -83,7 +80,7 @@ public class MessageBusImpl implements MessageBus {
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 
 		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
-		if(candidates_ms!=null) {
+		if(candidates_ms!=null) {		//objectResult.compareAndSet(null,result);
             MicroService ms=candidates_ms.poll();
             Future<T> future=null;
             try
