@@ -48,9 +48,14 @@ public class BookStoreRunner {
             //getting the whole 'initialResources' array
             JsonArray initialResourcesArray=jsonObject.getAsJsonArray("initialResources");
             JsonElement vehiclesElement=initialResourcesArray.get(0);
-            System.out.println(vehiclesElement);
-            //JsonArray vehiclesArray=vehiclesElement.getAsJsonArray();
+            JsonObject vehiclesObject=vehiclesElement.getAsJsonObject();
+            JsonArray vehiclesArray=vehiclesObject.getAsJsonArray("vehicles");
 
+            //prasing the array into vehicles
+            for(int i=0;i<vehiclesArray.size();i++)
+            {
+
+            }
 
         }
         catch (FileNotFoundException exp)
