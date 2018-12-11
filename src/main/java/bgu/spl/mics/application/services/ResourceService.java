@@ -13,9 +13,8 @@ import bgu.spl.mics.MicroService;
  */
 public class ResourceService extends MicroService{
 
-	public ResourceService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	public ResourceService(int i) {
+		super("resources "+i);
 	}
 
 	@Override

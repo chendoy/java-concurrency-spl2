@@ -10,7 +10,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="spl191BookStore" target="1.8" />
       <module name="SPL_ass2" target="1.8" />
     </bytecodeTargetLevel>
   </component>
