@@ -14,9 +14,8 @@ import bgu.spl.mics.MicroService;
 
 public class InventoryService extends MicroService{
 
-	public InventoryService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	public InventoryService(int i) {
+		super("inventory "+i);
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package bgu.spl.mics;
 
 /**
- * A "Marker" interface extending {@link Message}. When sending a Broadcast message
+ * A "Marker" interface extending {@link Message}. When sending a Broadcasts message
  * using the {@link MessageBus}, it will be received by all the subscribers of this
- * Broadcast-message type (the message Class).
+ * Broadcasts-message type (the message Class).
  */
 public interface Broadcast extends Message {
 

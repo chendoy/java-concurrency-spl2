@@ -8,3 +8,8 @@ issuedTick = the tick 1 line before this function returns (it is the tick when t
 orderTick= the tick in which the WEBAPI Service fetch the (PuarchesBook book1 event) from his queue
 proccessTick= the tick in which  SellingService fetchs from his Message's queue the WebApi event (sellBook book1 event)
 
+
+לוודא שאין synchronised איפה שיש atomic reference
+
+בתוך הcatch של interruptedExeption לעשות קריאה לinterrupt()
+

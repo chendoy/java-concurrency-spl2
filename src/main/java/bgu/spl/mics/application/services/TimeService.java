@@ -1,49 +1,80 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Broadcast;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
+import bgu.spl.mics.application.Broadcasts.TickBroadcast;
+import bgu.spl.mics.application.passiveObjects.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TimeService is the global system timer There is only one instance of this micro-service.
  * It keeps track of the amount of ticks passed since initialization and notifies
- * all other micro-services about the current time tick using {@link Tick Broadcast}.
+ * all other micro-services about the current time tick using {@link Tick Broadcasts}.
  * This class may not hold references for objects which it is not responsible for:
  * {@link ResourcesHolder}, {@link MoneyRegister}, {@link Inventory}.
- * 
+ *
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class TimeService extends MicroService{
 
-	private ResourceService resourceService;
-	private MoneyRegister moneyRegister;
-	private Inventory inventory;
+	private AtomicInteger currentTime;
+	private Timer timer;
 
-	private static class TimeServiceHolder{
-		private static TimeService instance =new TimeService();
+
+	public TimeService(int milliSecForClockTick,int duration) {
+		super("Time Service");
+		initialize();
+		run(milliSecForClockTick,duration);
 	}
 
-	public static TimeService getInstance() {
-		return TimeService.TimeServiceHolder.instance;
+
+	//not sure 100%
+	private void run(int milliSecForClockTick,int duration) {
+		//starting count time
+		if(currentTime.get()<=duration) {
+			MessageBusImpl.getInstance().sendBroadcast((new TickBroadcast(currentTime.get())));
+		}
+
+		timer.schedule(wrap(()-> {
+					if(currentTime.incrementAndGet() <= duration) {
+						MessageBusImpl.getInstance().sendBroadcast(new TickBroadcast(currentTime.get())); }
+					else {
+						timer.cancel();
+					}
+				}
+		),0,milliSecForClockTick);
+
+
+
 	}
 
 
-	private TimeService() {
-		super("Change_This_Name");
-		// TODO Implement this
-	}
 
-	//to implement this
-	public int getCurrentTick() {
-		return -5;
-	}
+//		int time=currentTime.get();
+//		while (time<=duration) {
+//			Broadcasts curTimeBroadCast=new TickBroadcast(time);
+//			MessageBusImpl.getInstance().sendBroadcast(curTimeBroadCast);
+//		}
+
+
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
-		
+		timer=new Timer();
+		currentTime=new AtomicInteger(1);
 	}
 
+	private static TimerTask wrap(Runnable r) {
+		return new TimerTask() {
+
+			@Override
+			public void run() {
+				r.run();
+			}
+		};
+	}
 }

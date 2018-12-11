@@ -1,6 +1,11 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
+import bgu.spl.mics.application.passiveObjects.Pair;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -13,9 +18,10 @@ import bgu.spl.mics.MicroService;
  */
 public class APIService extends MicroService{
 
-	public APIService() {
-		super("Change_This_Name");
-		// TODO Implement this
+
+	public APIService(int i) {
+		super("api "+i);
+
 	}
 
 	@Override
