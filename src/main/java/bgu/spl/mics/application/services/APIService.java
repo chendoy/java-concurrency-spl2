@@ -18,24 +18,10 @@ import java.util.List;
  */
 public class APIService extends MicroService{
 
-	private String id;
-	private String name;
-	private String address;
-	private int distance;
-	private String creditCardNumber;
-	private int creditCardAmount;
-	private List<Pair<String,Integer>> orderSchedule;
 
-
-	public APIService(String id, String name, String address, int distance, String creditCardNumber, int creditCardAmount, List<Pair<String,Integer>> orderSchedule, int i) {
+	public APIService(int i) {
 		super("api "+i);
-		this.id=id;
-		this.name=name;
-		this.address=address;
-		this.distance=distance;
-		this.creditCardNumber=creditCardNumber;
-		this.creditCardAmount=creditCardAmount;
-		this.orderSchedule=orderSchedule;
+
 	}
 
 	@Override

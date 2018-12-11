@@ -10,36 +10,52 @@ import java.util.List;
  */
 public class Customer {
 
+	private int id;
+	private String name;
+	private String address;
+	private int distance;
+	private int creditCardNumber;
+	private int creditCardAmount;
+	private List<Pair<String,Integer>> orderSchedule;
+
+	public Customer(int id, String name, String address, int distance, int creditCardNumber, int creditCardAmount, List<Pair<String,Integer>> orderSchedule)
+	{
+		this.id=id;
+		this.name=name;
+		this.address=address;
+		this.distance=distance;
+		this.creditCardNumber=creditCardNumber;
+		this.creditCardAmount=creditCardAmount;
+		this.orderSchedule=orderSchedule;
+	}
+
+
 	/**
      * Retrieves the name of the customer.
      */
 	public String getName() {
-		// TODO Implement this
-		return null;
+		return name;
 	}
 
 	/**
      * Retrieves the ID of the customer  . 
      */
 	public int getId() {
-		// TODO Implement this
-		return 0;
+		return id;
 	}
 	
 	/**
      * Retrieves the address of the customer.  
      */
 	public String getAddress() {
-		// TODO Implement this
-		return null;
+		return address;
 	}
 	
 	/**
      * Retrieves the distance of the customer from the store.  
      */
 	public int getDistance() {
-		// TODO Implement this
-		return 0;
+		return distance;
 	}
 
 	
@@ -59,16 +75,14 @@ public class Customer {
      * @return Amount of money left.   
      */
 	public int getAvailableCreditAmount() {
-		// TODO Implement this
-		return 0;
+		return creditCardAmount;
 	}
 	
 	/**
      * Retrieves this customers credit card serial number.    
      */
 	public int getCreditNumber() {
-		// TODO Implement this
-		return 0;
+		return creditCardNumber;
 	}
 	
 }

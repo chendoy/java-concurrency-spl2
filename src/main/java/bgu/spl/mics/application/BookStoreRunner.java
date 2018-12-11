@@ -1,6 +1,7 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
+import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
@@ -31,7 +32,7 @@ public class BookStoreRunner {
     private static InventoryService[] inventoryServices;
     private static LogisticsService[] logisticsServices;
     private static ResourceService[] resourceServices;
-    private static APIService[] apiServices;
+    private static Customer[] customers;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
 
@@ -117,18 +118,18 @@ public class BookStoreRunner {
                 resourceServices[i-1]=new ResourceService(i);
 
             JsonArray customersArray=servicesObject.getAsJsonArray("customers");
-            apiServices=new APIService[customersArray.size()];
+            customers =new Customer[customersArray.size()];
 
 
             //parsing each customer
-            for (int i=0;i<apiServices.length;i++)
+            for (int i = 0; i< customers.length; i++)
             {
                 JsonObject currentElement=customersArray.get(i).getAsJsonObject();
-                String id=currentElement.get("id").getAsString();
+                int id=currentElement.get("id").getAsInt();
                 String name=currentElement.get("name").getAsString();
                 String address=currentElement.get("address").getAsString();
                 int distance=currentElement.get("distance").getAsInt();
-                String creditCardNumber=currentElement.get("creditCard").getAsJsonObject().get("number").getAsString();
+                int creditCardNumber=currentElement.get("creditCard").getAsJsonObject().get("number").getAsInt();
                 int creditCardAmount=currentElement.get("creditCard").getAsJsonObject().get("amount").getAsInt();
 
                 //parsing customer's order schedule
@@ -142,8 +143,8 @@ public class BookStoreRunner {
                     ((LinkedList<Pair<String, Integer>>) orderScheduleList).addFirst(orderScheduleElement);
                 }
 
-                APIService newAPIservice=new APIService(id,name,address,distance,creditCardNumber,creditCardAmount,orderScheduleList,i+1);
-                apiServices[i]=newAPIservice;
+                Customer newCustomer=new Customer(id,name,address,distance,creditCardNumber,creditCardAmount,orderScheduleList);
+                customers[i]=newCustomer;
             }
         }
         catch (FileNotFoundException e)
