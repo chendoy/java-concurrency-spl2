@@ -1,6 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
+import bgu.spl.mics.application.services.ResourceService;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Passive object representing the resource manager.
@@ -12,13 +15,22 @@ import bgu.spl.mics.Future;
  * You can add ONLY private methods and fields to this class.
  */
 public class ResourcesHolder {
+
+	private ConcurrentLinkedQueue<DeliveryVehicle> vehiclesResource;
+
+	private static class SingletonHolder{
+		private static ResourcesHolder instance=new ResourcesHolder();
+	}
+
+	private ResourcesHolder(){
+		vehiclesResource=new ConcurrentLinkedQueue<>();
+	}
 	
 	/**
      * Retrieves the single instance of this class.
      */
 	public static ResourcesHolder getInstance() {
-		//TODO: Implement this
-		return null;
+		return SingletonHolder.instance;
 	}
 	
 	/**
@@ -49,7 +61,9 @@ public class ResourcesHolder {
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
 	public void load(DeliveryVehicle[] vehicles) {
-		//TODO: Implement this
+		for (DeliveryVehicle v:vehicles) {
+			vehiclesResource.add(v);
+		}
 	}
 
 }

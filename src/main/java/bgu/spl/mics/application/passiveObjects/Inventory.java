@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Passive data-object representing the store inventory.
@@ -16,14 +14,16 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class Inventory {
 
-	private ConcurrentHashMap<Integer,BookInventoryInfo> booksList;
+	private ConcurrentHashMap<Integer,BookInventoryInfo> booksInInventory;
+	private int numOfBooks;
 
 	private static class InventoryHolder {
 		private static Inventory instance = new Inventory();
 	}
 
 	private Inventory() {
-		booksList=new ConcurrentHashMap<>();
+		booksInInventory=new ConcurrentHashMap<>();
+		numOfBooks=0;
 	}
 
 		/**
@@ -41,7 +41,10 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		
+		for (BookInventoryInfo bii:inventory) {
+			booksInInventory.put(numOfBooks,bii);
+			numOfBooks++;
+		}
 	}
 	
 	/**
@@ -66,7 +69,10 @@ public class Inventory {
      * @return the price of the book if it is available, -1 otherwise.
      */
 	public int checkAvailabiltyAndGetPrice(String book) {
-		//TODO: Implement this
+		for (int i=0;i<numOfBooks;i++) {
+			if(booksInInventory.get(i).getBookTitle().equals(book))
+				return booksInInventory.get(i).getPrice();
+		}
 		return -1;
 	}
 	
