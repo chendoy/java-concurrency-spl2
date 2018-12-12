@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.Events.OrderBookEvent;
+import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.services.APIService;
 import bgu.spl.mics.application.services.SellingService;
 
@@ -19,15 +18,15 @@ public class OrderReceipt {
 	private SellingService sellerService; //the microService that handles the selling operation
 	private APIService apiService; // the microService that puarch a book (puarch book event)
 	private  int issuedTick;
-	private OrderBookEvent orderBookEvent;
+	private BookOrderEvent bookOrderEvent;
 
 
-	public OrderReceipt(BookInventoryInfo bookInventoryInfo, Customer customer, SellingService sellerService, APIService webApiService, OrderBookEvent orderBookEvent) {
+	public OrderReceipt(BookInventoryInfo bookInventoryInfo, Customer customer, SellingService sellerService, APIService webApiService, BookOrderEvent bookOrderEvent) {
 		this.customer=customer;
 		this.bookInventoryInfo=bookInventoryInfo;
 		this.sellerService =sellerService;
 		this.apiService =webApiService;
-		this.orderBookEvent=orderBookEvent;
+		this.bookOrderEvent = bookOrderEvent;
 	}
 	/**
 	 * Retrieves the orderId of this receipt.
@@ -79,7 +78,7 @@ public class OrderReceipt {
 	 * Retrieves the tick in which the customer sent the purchase request.
 	 */
 	public int getOrderTick() {
-		apiService.getOrderdBookTick(orderBookEvent);
+		return apiService.getOrderdBookTick(bookOrderEvent);
 	}
 
 	/**
@@ -87,6 +86,6 @@ public class OrderReceipt {
 	 * processing the order.
 	 */
 	public int getProcessTick() {
-		return sellerService.getStartProcessTickTime(orderBookEvent);
+		return sellerService.getStartProcessTickTime(bookOrderEvent);
 	}
 }

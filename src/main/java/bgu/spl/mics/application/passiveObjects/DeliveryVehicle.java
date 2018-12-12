@@ -20,20 +20,14 @@ public class DeliveryVehicle {
 	/**
      * Retrieves the license of this delivery vehicle.   
      */
-	public int getLicense() {
-		// TODO Implement this
-		return 0;
-	}
+	public int getLicense() { return license;}
 	
 	/**
      * Retrieves the speed of this vehicle person.   
      * <p>
-     * @return Number of ticks needed for 1 Km.
+     * @return Number of ticks needed for 1 Km. (milliseconds)
      */
-	public int getSpeed() {
-		// TODO Implement this
-		return 0;
-	}
+	public int getSpeed() { return speed;}
 	
 	/**
      * Simulates a delivery by sleeping for the amount of time that 
@@ -43,6 +37,14 @@ public class DeliveryVehicle {
      * @param distance	The distance from the store to the customer.
      */
 	public void deliver(String address, int distance) {
-		// TODO Implement this
+
+		try {
+			Thread.sleep(speed*distance);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		 }
+
 	}
-}
+

@@ -1,14 +1,11 @@
 package bgu.spl.mics.application;
 
-import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
-import bgu.spl.mics.application.passiveObjects.Customer;
-import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
+import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import bgu.spl.mics.application.passiveObjects.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,8 +51,8 @@ public class BookStoreRunner {
             {
                 JsonObject currentBook=bookInventoryInfoArray.get(i).getAsJsonObject();
                 String bookTitle=currentBook.get("bookTitle").getAsString();
-                int amount=Integer.parseInt(currentBook.get("amount").getAsString());
-                int price=Integer.parseInt(currentBook.get("price").getAsString());
+                int amount=currentBook.get("amount").getAsInt();
+                int price=currentBook.get("price").getAsInt();
                 BookInventoryInfo newBook=new BookInventoryInfo(bookTitle,amount,price);
                 books[i]=newBook;
             }

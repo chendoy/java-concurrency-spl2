@@ -2,11 +2,11 @@ package bgu.spl.mics.application.Events;
 
 import bgu.spl.mics.Event;
 
-public class OrderBookEvent implements Event<OrderBookEvent> {
+public class BookOrderEvent implements Event<BookOrderEvent> {
 
     private String bookName;
 
-    public OrderBookEvent(String bookName){
+    public BookOrderEvent(String bookName){
         this.bookName=bookName;
     }
 }

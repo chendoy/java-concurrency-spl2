@@ -73,7 +73,7 @@ public class MessageBusImpl implements MessageBus {
 				{
 					BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
 					ms_Queue.add(b);
-					String hi="";
+
 				}
 			}
 			notifyAll();
@@ -112,6 +112,7 @@ public class MessageBusImpl implements MessageBus {
 		QueueMap.put(m,newMsgQueue);
 	}
 
+	//TODO: synchronised to prevent situation when the microservice gets new messages while unregistering
 	@Override
 	public void unregister(MicroService m) {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered

@@ -3,7 +3,10 @@ package bgu.spl.mics.application.passiveObjects;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.application.services.ResourceService;
 
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Passive object representing the resource manager.
@@ -16,14 +19,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class ResourcesHolder {
 
-	private ConcurrentLinkedQueue<DeliveryVehicle> vehiclesResource;
+	private BlockingQueue<DeliveryVehicle> vehiclesResource;
+	private BlockingQueue<Future<DeliveryVehicle>> futureVehicles;
 
 	private static class SingletonHolder{
 		private static ResourcesHolder instance=new ResourcesHolder();
 	}
 
 	private ResourcesHolder(){
-		vehiclesResource=new ConcurrentLinkedQueue<>();
+		vehiclesResource=new LinkedBlockingDeque<>();
 	}
 	
 	/**
@@ -41,8 +45,17 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		//TODO: Implement this
-		return null;
+		Future<DeliveryVehicle> future=new Future<>();
+
+		synchronized (vehiclesResource) {
+			if(!vehiclesResource.isEmpty()) {
+				DeliveryVehicle vehicle=vehiclesResource.poll();
+				future.resolve(vehicle);
+			}
+			else
+				futureVehicles.add(future);
+		}
+		return future;
 	}
 	
 	/**
@@ -52,7 +65,15 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		//TODO: Implement this
+		synchronized (vehiclesResource) {
+			if(!futureVehicles.isEmpty()) {
+				//get the future vehicles which waited the most
+				Future<DeliveryVehicle> futureVehicle=futureVehicles.poll();
+				futureVehicle.resolve(vehicle);
+			}
+			else
+				vehiclesResource.add(vehicle);
+		}
 	}
 	
 	/**

@@ -13,3 +13,5 @@ proccessTick= the tick in which  SellingService fetchs from his Message's queue 
 
 בתוך הcatch של interruptedExeption לעשות קריאה לinterrupt()
 
+https://www.cs.bgu.ac.il/~spl191/phpBB/viewtopic.php?f=4&t=402
+

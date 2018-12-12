@@ -3,7 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.Broadcasts.FiftyPercentDiscount;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
-import bgu.spl.mics.application.Events.OrderBookEvent;
+import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.Pair;
 
@@ -26,7 +26,7 @@ public class APIService extends MicroService implements Callback<Message> {
 	private int currentTick;
 
 	private ConcurrentHashMap<Integer, ConcurrentLinkedQueue<String>> tickBooksNamesMap;
-	private ConcurrentHashMap<OrderBookEvent,Integer> eventToTickTimeMap;
+	private ConcurrentHashMap<BookOrderEvent,Integer> eventToTickTimeMap;
 	private Customer customer;
 
 	public APIService(Customer customer,int i) {
@@ -67,9 +67,9 @@ public class APIService extends MicroService implements Callback<Message> {
 			ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
 			if(currentTickBooks!=null) { //this customer has books to order on this schedule
 				for (String bookName : currentTickBooks) {
-					OrderBookEvent orderBookEvent=new OrderBookEvent(bookName);
-					MessageBusImpl.getInstance().sendEvent(orderBookEvent);
-					eventToTickTimeMap.put(orderBookEvent,currentTick);
+					BookOrderEvent bookOrderEvent =new BookOrderEvent(bookName);
+					MessageBusImpl.getInstance().sendEvent(bookOrderEvent);
+					eventToTickTimeMap.put(bookOrderEvent,currentTick);
 				}
 				tickBooksNamesMap.remove(currentTick);
 			}
@@ -77,7 +77,7 @@ public class APIService extends MicroService implements Callback<Message> {
 
 	}
 
-	public Integer getOrderdBookTick(OrderBookEvent orderBookEvent) {
-		return eventToTickTimeMap.get(orderBookEvent);
+	public Integer getOrderdBookTick(BookOrderEvent bookOrderEvent) {
+		return eventToTickTimeMap.get(bookOrderEvent);
 	}
 }

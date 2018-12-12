@@ -88,4 +88,8 @@ public class Customer {
 		return orderSchedule;
 	}
 
+	public void chargeCreditCard(int amountToCharge) {
+		creditCardAmount-=amountToCharge;
+	}
+
 }

@@ -5,11 +5,10 @@ import bgu.spl.mics.Message;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
-import bgu.spl.mics.application.Events.OrderBookEvent;
+import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.Pair;
 
-import java.security.MessageDigest;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,19 +39,19 @@ public class SellingService extends MicroService implements Callback<Message> {
 		startProcessTickTime=-1;
 		MessageBusImpl.getInstance().register(this);
 		MessageBusImpl.getInstance().subscribeBroadcast(TickBroadcast.class,this);
-		MessageBusImpl.getInstance().subscribeEvent(OrderBookEvent.class,this);
+		MessageBusImpl.getInstance().subscribeEvent(BookOrderEvent.class,this);
 	}
 
 	@Override
 	public void call(Message c) {
-		if(c instanceof OrderBookEvent) {
+		if(c instanceof BookOrderEvent) {
 			MessageToStartEndTimes.put(c,new Pair(curTick,null));
 		}
 		else if (c instanceof TickBroadcast) {
 			curTick=((TickBroadcast) c).getCurClockTick();
 		}
 	}
-	public int getStartProcessTickTime(OrderBookEvent order) {
+	public int getStartProcessTickTime(BookOrderEvent order) {
 		return MessageToStartEndTimes.get(order).getKey();
 
 	}
