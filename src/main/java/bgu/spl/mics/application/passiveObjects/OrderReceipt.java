@@ -1,7 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.services.TimeService;
+import bgu.spl.mics.application.Events.OrderBookEvent;
+import bgu.spl.mics.application.services.APIService;
+import bgu.spl.mics.application.services.SellingService;
 
 /**
  * Passive data-object representing a receipt that should
@@ -14,17 +16,18 @@ public class OrderReceipt {
 
 	private BookInventoryInfo bookInventoryInfo;
 	private Customer customer;
-	private MicroService micro_Seller ; //the microService that handles the selling operation
-	private MicroService micro_Customer; // the microService that puarch a book (puarch book event)
+	private SellingService sellerService; //the microService that handles the selling operation
+	private APIService apiService; // the microService that puarch a book (puarch book event)
 	private  int issuedTick;
+	private OrderBookEvent orderBookEvent;
 
 
-	public OrderReceipt(BookInventoryInfo bookInventoryInfo, Customer customer, MicroService sellerService,MicroService webApiService) {
-		issuedTick= TimeService.getInstance().getCurrentTick();
+	public OrderReceipt(BookInventoryInfo bookInventoryInfo, Customer customer, SellingService sellerService, APIService webApiService, OrderBookEvent orderBookEvent) {
 		this.customer=customer;
 		this.bookInventoryInfo=bookInventoryInfo;
-		this.micro_Seller=sellerService;
-		this.micro_Customer=webApiService;
+		this.sellerService =sellerService;
+		this.apiService =webApiService;
+		this.orderBookEvent=orderBookEvent;
 	}
 	/**
 	 * Retrieves the orderId of this receipt.
@@ -38,7 +41,7 @@ public class OrderReceipt {
 	 * Retrieves the name of the selling service which handled the order.
 	 */
 	public String getSeller() {
-		return micro_Seller.getName();
+		return sellerService.getName();
 	}
 
 	/**
@@ -76,8 +79,7 @@ public class OrderReceipt {
 	 * Retrieves the tick in which the customer sent the purchase request.
 	 */
 	public int getOrderTick() {
-		// TODO Implement this
-		return 0;
+		apiService.getOrderdBookTick(orderBookEvent);
 	}
 
 	/**
@@ -85,7 +87,6 @@ public class OrderReceipt {
 	 * processing the order.
 	 */
 	public int getProcessTick() {
-		// TODO Implement this
-		return 0;
+		return sellerService.getStartProcessTickTime(orderBookEvent);
 	}
 }

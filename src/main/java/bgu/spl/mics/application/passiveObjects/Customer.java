@@ -29,7 +29,6 @@ public class Customer {
 		this.orderSchedule=orderSchedule;
 	}
 
-
 	/**
      * Retrieves the name of the customer.
      */
@@ -84,5 +83,9 @@ public class Customer {
 	public int getCreditNumber() {
 		return creditCardNumber;
 	}
-	
+
+	public List<Pair<String, Integer>> getOrderSchedule() {
+		return orderSchedule;
+	}
+
 }

@@ -16,6 +16,7 @@ public class InventoryService extends MicroService{
 
 	public InventoryService(int i) {
 		super("inventory "+i);
+		initialize();
 	}
 
 	@Override
