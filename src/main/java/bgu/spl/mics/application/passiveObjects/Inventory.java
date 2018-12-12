@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,10 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * You can add ONLY private fields and methods to this class as you see fit.
  */
+
 public class Inventory {
 
-	private ConcurrentHashMap<Integer,BookInventoryInfo> booksInInventory;
-	private int numOfBooks;
+	private ConcurrentHashMap<String,BookInventoryInfo> booksInInventory;
+	private HashMap<String,Integer> booksAmountMap;
+	private int numOfDistinctBooks;
 
 	private static class InventoryHolder {
 		private static Inventory instance = new Inventory();
@@ -23,7 +29,7 @@ public class Inventory {
 
 	private Inventory() {
 		booksInInventory=new ConcurrentHashMap<>();
-		numOfBooks=0;
+		numOfDistinctBooks=0;
 	}
 
 		/**
@@ -42,22 +48,29 @@ public class Inventory {
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
 		for (BookInventoryInfo bii:inventory) {
-			booksInInventory.put(numOfBooks,bii);
-			numOfBooks++;
+			booksInInventory.put(bii.getBookTitle(),bii);
+			booksAmountMap=new LinkedHashMap<>();
+			numOfDistinctBooks++;
 		}
 	}
 	
 	/**
      * Attempts to take one book from the store.
      * <p>
-     * @param book 		Name of the book to take from the store
+     * @param book Name of the book to take from the store
      * @return 	an {@link Enum} with options NOT_IN_STOCK and SUCCESSFULLY_TAKEN.
      * 			The first should not change the state of the inventory while the 
      * 			second should reduce by one the number of books of the desired type.
      */
-	public OrderResult take (String book) {
-		
-		return null;
+	public synchronized OrderResult take (String book) {
+		if(booksInInventory.get(book).getAmountInInventory()!=0) { //book is available
+			booksInInventory.get(book).decreaseAmountByOne();
+			Integer amount=booksAmountMap.remove(book);
+			booksAmountMap.put(book,amount-1);
+			return OrderResult.SUCCESSFULLY_TAKEN;
+		}
+		else
+			return OrderResult.NOT_IN_STOCK;
 	}
 	
 	
@@ -68,11 +81,9 @@ public class Inventory {
      * @param book 		Name of the book.
      * @return the price of the book if it is available, -1 otherwise.
      */
-	public int checkAvailabiltyAndGetPrice(String book) {
-		for (int i=0;i<numOfBooks;i++) {
-			if(booksInInventory.get(i).getBookTitle().equals(book))
-				return booksInInventory.get(i).getPrice();
-		}
+	public synchronized int checkAvailabiltyAndGetPrice(String book) {
+			if(booksInInventory.containsKey(book))
+				return booksInInventory.get(book).getPrice();
 		return -1;
 	}
 	
@@ -86,6 +97,17 @@ public class Inventory {
      * This method is called by the main method in order to generate the output.
      */
 	public void printInventoryToFile(String filename){
-		//TODO: Implement this
+		try{
+			FileOutputStream fileOut=new FileOutputStream(filename);
+			ObjectOutputStream out=new ObjectOutputStream(fileOut);
+			out.writeObject(booksAmountMap);
+			out.close();
+			fileOut.close();
+		}
+		catch(Exception e) {
+			System.out.println("Error: "+e.getMessage());
+		}
+
 	}
+
 }

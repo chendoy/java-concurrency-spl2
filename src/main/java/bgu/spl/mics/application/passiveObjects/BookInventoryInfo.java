@@ -49,7 +49,7 @@ public class BookInventoryInfo {
 		return price;
 	}
 
-
+	public void decreaseAmountByOne() {amountInInventory--;}
 
 
 }
