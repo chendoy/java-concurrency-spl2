@@ -1,12 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
-import bgu.spl.mics.application.services.ResourceService;
-
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Passive object representing the resource manager.
@@ -28,6 +25,7 @@ public class ResourcesHolder {
 
 	private ResourcesHolder(){
 		vehiclesResource=new LinkedBlockingDeque<>();
+		futureVehicles=new LinkedBlockingQueue<>();
 	}
 	
 	/**

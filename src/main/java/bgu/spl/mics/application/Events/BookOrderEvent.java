@@ -5,7 +5,7 @@ import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.services.APIService;
 
-public class BookOrderEvent implements Event<BookOrderEvent> {
+public class BookOrderEvent implements Event<OrderReceipt> {
 
     private String bookName;
     private Customer customer;

@@ -30,11 +30,18 @@ public class BookStoreRunner {
     private static LogisticsService[] logisticsServices;
     private static ResourceService[] resourceServices;
     private static Customer[] customers;
+    private static MoneyRegister moneyRegister;
+    private static ResourcesHolder resourcesHolder;
+    private static Inventory inventory;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
 
     public static void main(String[] args) {
 
+        //initializing singleton objects
+        moneyRegister=MoneyRegister.getInstance();
+        resourcesHolder=ResourcesHolder.getInstance();
+        inventory=Inventory.getInstance();
 
         Gson gson=new Gson();
         File jsonFile= Paths.get(args[0]).toFile();
@@ -88,7 +95,7 @@ public class BookStoreRunner {
 
             //creating the selling services
             for (int i=1;i<=numOfSellers;i++)
-                sellingServices[i-1]=new SellingService(i);
+                sellingServices[i-1]=new SellingService(i,moneyRegister);
 
             //parsing inventory services
             int numOfInventoryServices=servicesObject.get("inventoryService").getAsInt();
@@ -112,7 +119,7 @@ public class BookStoreRunner {
 
             //creating the resources services
             for (int i=1;i<=numOfResourcesServices;i++)
-                resourceServices[i-1]=new ResourceService(i);
+                resourceServices[i-1]=new ResourceService(i,resourcesHolder);
 
             JsonArray customersArray=servicesObject.getAsJsonArray("customers");
             customers =new Customer[customersArray.size()];
@@ -148,6 +155,10 @@ public class BookStoreRunner {
         {
             System.out.println("File not found: "+e.getMessage());
         }
+
+        inventory.load(books);
+        Thread timeThread=new Thread(timeService);
+        timeThread.start();
 
     }
 }

@@ -6,6 +6,7 @@ import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Events.AcquireVehicleEvent;
 import bgu.spl.mics.application.Events.DeliveryEvent;
+import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
@@ -19,7 +20,7 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class LogisticsService extends MicroService implements Callback<DeliveryEvent> {
+public class LogisticsService extends MicroService {
 
 	public LogisticsService(int i) {
 		super("logistics "+i);
@@ -29,14 +30,15 @@ public class LogisticsService extends MicroService implements Callback<DeliveryE
 	@Override
 	protected void initialize() {
 		MessageBusImpl.getInstance().register(this);
-		subscribeEvent(DeliveryEvent.class,this);
+		subscribeEvent(DeliveryEvent.class,(DeliveryEvent event)-> {
+																	Future<DeliveryVehicle> future = sendEvent(new AcquireVehicleEvent());
+																	DeliveryVehicle acquiredVehicle = future.get();
+																	acquiredVehicle.deliver(event.getCustomer().getAddress(), event.getCustomer().getDistance());
+																	ReleaseVehicleEvent releaseVehicleEvent = new ReleaseVehicleEvent(acquiredVehicle);
+																	sendEvent(releaseVehicleEvent);
+																}
+																);
 	}
 
-	@Override
-	public void call(DeliveryEvent c) {
-		Future<AcquireVehicleEvent> future= sendEvent(new AcquireVehicleEvent());
-		AcquireVehicleEvent acquiredVehicle=future.get();
-		acquiredVehicle.getVehicle().deliver(c.getCustomer().getAddress(),c.getCustomer().getDistance());
 
-	}
 }

@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
-import bgu.spl.mics.application.Broadcasts.FiftyPercentDiscount;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.Events.DeliveryEvent;
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class APIService extends MicroService implements Callback<Message> {
+public class APIService extends MicroService {
 
 	private int currentTick;
 
@@ -43,9 +42,27 @@ public class APIService extends MicroService implements Callback<Message> {
 		eventToTickTimeMap=new ConcurrentHashMap<>();
 		initOrderSchedule();
 		MessageBusImpl.getInstance().register(this);
-		MessageBusImpl.getInstance().subscribeBroadcast(FiftyPercentDiscount.class,this);
-		MessageBusImpl.getInstance().subscribeBroadcast(TickBroadcast.class,this);
-	}
+		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
+																				currentTick=tickBroadcast.getCurClockTick();
+																				//checks if there is book to order in that tick
+																				ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
+																				if(currentTickBooks!=null) { //this customer has books to order on this schedule
+																					for (String bookName : currentTickBooks) {
+																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
+																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
+																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
+																						OrderReceipt futureResult=futureOrderRecipt.get();
+																						if(futureResult!=null) {
+																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
+																							sendEvent(deliveryEvent);
+																						}
+																						else {
+
+																						}
+																						tickBooksNamesMap.remove(currentTick);
+																					}
+
+																			}});}
 
 	private void initOrderSchedule() {
 		List<Pair<String,Integer>> cusOrderSchdule=customer.getOrderSchedule();
@@ -60,36 +77,6 @@ public class APIService extends MicroService implements Callback<Message> {
 		}
 
 	}
-
-	@Override
-	public void call(Message c) {
-		if (c instanceof TickBroadcast) {
-			currentTick=((TickBroadcast) c).getCurClockTick();
-			//checks if there is book to order in that tick
-			ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
-			if(currentTickBooks!=null) { //this customer has books to order on this schedule
-				for (String bookName : currentTickBooks) {
-					BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
-					eventToTickTimeMap.put(bookOrderEvent,currentTick);
-					Future<BookOrderEvent>futureOrderRecipt=sendEvent(bookOrderEvent);
-					BookOrderEvent futureResult=futureOrderRecipt.get();
-					if(futureResult.getOrderReceipt()!=null) {
-						DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
-						sendEvent(deliveryEvent);
-					}
-					else {
-
-					}
-
-				}
-				tickBooksNamesMap.remove(currentTick);
-			}
-		}
-
-
-		}
-
-
 
 	public Integer getOrderdBookTick(BookOrderEvent bookOrderEvent) {
 		return eventToTickTimeMap.get(bookOrderEvent);

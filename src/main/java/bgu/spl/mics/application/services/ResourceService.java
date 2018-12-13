@@ -2,6 +2,8 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.Events.AcquireVehicleEvent;
+import bgu.spl.mics.application.Events.DeliveryEvent;
+import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
@@ -14,7 +16,7 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class ResourceService extends MicroService implements Callback<AcquireVehicleEvent> {
+public class ResourceService extends MicroService{
 
 	private ResourcesHolder resourcesHolder;
 
@@ -27,13 +29,12 @@ public class ResourceService extends MicroService implements Callback<AcquireVeh
 	@Override
 	protected void initialize() {
 		MessageBusImpl.getInstance().register(this);
-		subscribeEvent(AcquireVehicleEvent.class,this);
+		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> { Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
+																				DeliveryVehicle vehicle = futureVehicle.get();
+																				complete(event,vehicle);});
+
+		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> resourcesHolder.releaseVehicle(event.getVehicle()));
 	}
 
-	@Override
-	public void call(AcquireVehicleEvent c) {
-		Future<DeliveryVehicle> futureVehicle=resourcesHolder.acquireVehicle();
-		DeliveryVehicle vehicle=futureVehicle.get();
-		complete((Event)c,vehicle);
-	}
+
 }

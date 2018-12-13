@@ -14,7 +14,7 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
  * You MAY change constructor signatures and even add new public constructors.
  */
 
-public class InventoryService extends MicroService implements Callback<Message> {
+public class InventoryService extends MicroService {
 
 	private Inventory inventory;
 
@@ -26,14 +26,11 @@ public class InventoryService extends MicroService implements Callback<Message> 
 	@Override
 	protected void initialize() {
 		this.inventory=Inventory.getInstance();
+		MessageBusImpl.getInstance().register(this);
+		subscribeEvent(CheckAvailability.class,(CheckAvailability checkAvailability)->{
+																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
+																						complete(checkAvailability,available);
+																					});
 	}
 
-
-	@Override
-	public void call(Message c) {
-		if(c instanceof CheckAvailability) {
-			int available=inventory.checkAvailabiltyAndGetPrice(((CheckAvailability)c).getBookName());
-			complete((Event)c,available);
-		}
-	}
 }

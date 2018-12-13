@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class SellingService extends MicroService implements Callback<Message> {
+public class SellingService extends MicroService {
 
 	private int curBookId;
 	private int curTick=1;
@@ -38,47 +38,36 @@ public class SellingService extends MicroService implements Callback<Message> {
 		MessageToStartEndTimes=new ConcurrentHashMap<>();
 		startProcessTickTime=-1;
 		MessageBusImpl.getInstance().register(this);
-		MessageBusImpl.getInstance().subscribeBroadcast(TickBroadcast.class,this);
-		MessageBusImpl.getInstance().subscribeEvent(BookOrderEvent.class,this);
+		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->curTick=tickBroadcast.getCurClockTick());
+		subscribeEvent(BookOrderEvent.class,(BookOrderEvent boe)->{MessageToStartEndTimes.put(boe,new Pair(curTick,null));
+																	CheckAvailability checkAvailability=new CheckAvailability(boe.getBookName());
+																	Future<Integer> futureAvailability=sendEvent(checkAvailability);
+																	Integer avilablity=futureAvailability.get();
+																	if(avilablity!=-1) {
+																		Customer customerToCharge=boe.getCustomer();
+																		int price=avilablity;
+																		boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
+																		if(CanBeCharged) {
+																			OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
+																			if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
+																			{
+																				OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
+																				moneyRegister.file(newOrderReceipt);
+																				complete(boe,newOrderReceipt);
+																			}
+																			else
+																				complete(boe,null);
+																		}
+																		else {
+																			complete(boe,null);
+																		}
+																	}
+																	else
+																		complete(boe,null);
+
+																	});
 	}
 
-	@Override
-	public void call(Message c) {
-		if(c instanceof BookOrderEvent) {
-			MessageToStartEndTimes.put(c,new Pair(curTick,null));
-			String bookName=((BookOrderEvent)c).getBookName();
-			BookOrderEvent bookEvent=(BookOrderEvent)c;
-			CheckAvailability checkAvailability=new CheckAvailability(bookName);
-			Future<CheckAvailability> futureAvailability=MessageBusImpl.getInstance().sendEvent(checkAvailability);
-			CheckAvailability avilablity=futureAvailability.get();
-			if(avilablity.getAvailable()!=-1) {
-				Customer customerToCharge=bookEvent.getCustomer();
-				int price=avilablity.getAvailable();
-				boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
-				if(CanBeCharged) {
-					OrderResult takeOrder=Inventory.getInstance().take(bookName);
-					if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
-					{
-						OrderReceipt newOrderReceipt=new OrderReceipt(bookName,price,customerToCharge,getStartProcessTickTime(bookEvent),getName(),bookEvent.getEventTick(),curTick);
-						moneyRegister.file(newOrderReceipt);
-						complete((Event)c,newOrderReceipt);
-					}
-						else
-							complete((Event)c,null);
-				}
-				else {
-					complete((Event)c,null);
-				}
-			}
-			else {
-				complete((Event)c,null);
-			}
-
-		}
-		else if (c instanceof TickBroadcast) {
-			curTick=((TickBroadcast) c).getCurClockTick();
-		}
-	}
 	public int getStartProcessTickTime(BookOrderEvent order) {
 		return MessageToStartEndTimes.get(order).getKey();
 

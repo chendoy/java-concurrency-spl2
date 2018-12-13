@@ -53,15 +53,6 @@ public class TimeService extends MicroService{
 	}
 
 
-
-//		int time=currentTime.get();
-//		while (time<=duration) {
-//			Broadcasts curTimeBroadCast=new TickBroadcast(time);
-//			MessageBusImpl.getInstance().sendBroadcast(curTimeBroadCast);
-//		}
-
-
-
 	@Override
 	protected void initialize() {
 		timer=new Timer();
