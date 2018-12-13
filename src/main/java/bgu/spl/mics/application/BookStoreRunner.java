@@ -1,5 +1,7 @@
 package bgu.spl.mics.application;
 
+import bgu.spl.mics.Coordinator;
+import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
@@ -13,6 +15,7 @@ import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -33,6 +36,10 @@ public class BookStoreRunner {
     private static MoneyRegister moneyRegister;
     private static ResourcesHolder resourcesHolder;
     private static Inventory inventory;
+    private static APIService[]webApis;
+    private static CountDownLatch latchObject;
+    private static int numOfServices=0;
+    private static Coordinator coordinator;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
 
@@ -43,10 +50,19 @@ public class BookStoreRunner {
         resourcesHolder=ResourcesHolder.getInstance();
         inventory=Inventory.getInstance();
 
+
         Gson gson=new Gson();
         File jsonFile= Paths.get(args[0]).toFile();
         try {
             JsonObject jsonObject = gson.fromJson(new FileReader(jsonFile), JsonObject.class);
+
+            //first will count number of selling services+webAPIs to init the latchObject
+            JsonObject servicesObject_pre=jsonObject.getAsJsonObject("services");
+            int numOfSellers_pre=servicesObject_pre.get("selling").getAsInt();
+            JsonArray customersArray_pre=servicesObject_pre.getAsJsonArray("customers");
+            int numOfCustomer_pre=customersArray_pre.size();
+            int numOfSellersAndCustomers=numOfSellers_pre+numOfCustomer_pre;
+            latchObject=new CountDownLatch(numOfSellersAndCustomers);
 
             //getting the whole 'initialInventory' array
             JsonArray bookInventoryInfoArray=jsonObject.getAsJsonArray("initialInventory");
@@ -95,7 +111,7 @@ public class BookStoreRunner {
 
             //creating the selling services
             for (int i=1;i<=numOfSellers;i++)
-                sellingServices[i-1]=new SellingService(i,moneyRegister);
+                sellingServices[i-1]=new SellingService(i,moneyRegister,latchObject);
 
             //parsing inventory services
             int numOfInventoryServices=servicesObject.get("inventoryService").getAsInt();
@@ -157,8 +173,23 @@ public class BookStoreRunner {
         }
 
         inventory.load(books);
-        Thread timeThread=new Thread(timeService);
-        timeThread.start();
+        coordinator=new Coordinator(latchObject);
+
+        //creating API service per customer
+        webApis=new APIService[customers.length];
+        for(int i=0;i<webApis.length;i++)
+            webApis[i]=new APIService(customers[i],i+1,latchObject);
+
+
+        new Thread(coordinator).start();
+        for(int i=0;i<sellingServices.length;i=i+1)
+            new Thread(sellingServices[i]).start();
+
+        for(int i=0;i<webApis.length;i=i+1)
+            new Thread(webApis[i]).start();
+
+
+
 
     }
 }
