@@ -4,6 +4,7 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.Broadcasts.FiftyPercentDiscount;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.BookOrderEvent;
+import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.passiveObjects.Customer;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.Pair;
@@ -68,9 +69,18 @@ public class APIService extends MicroService implements Callback<Message> {
 			ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
 			if(currentTickBooks!=null) { //this customer has books to order on this schedule
 				for (String bookName : currentTickBooks) {
+					BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
+					eventToTickTimeMap.put(bookOrderEvent,currentTick);
+					Future<BookOrderEvent>futureOrderRecipt=sendEvent(bookOrderEvent);
+					BookOrderEvent futureResult=futureOrderRecipt.get();
+					if(futureResult.getOrderReceipt()!=null) {
+						DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
+						sendEvent(deliveryEvent);
+					}
+					else {
 
-					//Future<OrderReceipt>futureOrderRecipt=()-> MessageBusImpl.getInstance().sendEvent(new BookOrderEvent(bookName));
-					//eventToTickTimeMap.put(bookOrderEvent,currentTick);
+					}
+
 				}
 				tickBooksNamesMap.remove(currentTick);
 			}

@@ -20,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Only private fields and methods may be added to this class.
  * <p>
  */
-public abstract class MicroService implements Runnable {
+public abstract class
+MicroService implements Runnable {
 
     private boolean terminated = false;
     private final String name;

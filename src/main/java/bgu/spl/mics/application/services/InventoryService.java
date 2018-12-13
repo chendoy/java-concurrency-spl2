@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
+import bgu.spl.mics.application.Events.CheckAvailability;
+import bgu.spl.mics.application.passiveObjects.Inventory;
 
 /**
  * InventoryService is in charge of the book inventory and stock.
@@ -12,7 +14,9 @@ import bgu.spl.mics.MicroService;
  * You MAY change constructor signatures and even add new public constructors.
  */
 
-public class InventoryService extends MicroService{
+public class InventoryService extends MicroService implements Callback<Message> {
+
+	private Inventory inventory;
 
 	public InventoryService(int i) {
 		super("inventory "+i);
@@ -21,8 +25,15 @@ public class InventoryService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
-		
+		this.inventory=Inventory.getInstance();
 	}
 
+
+	@Override
+	public void call(Message c) {
+		if(c instanceof CheckAvailability) {
+			int available=inventory.checkAvailabiltyAndGetPrice(((CheckAvailability)c).getBookName());
+			complete((Event)c,available);
+		}
+	}
 }

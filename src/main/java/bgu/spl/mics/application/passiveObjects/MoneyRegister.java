@@ -61,9 +61,8 @@ public class MoneyRegister {
      * @param amount 	amount to charge
      */
 
-	//TODO: need to varify the customer has enough creidt..in selling service?
 	public void chargeCreditCard(Customer c, int amount) {
-		c.chargeCreditCard(amount);
+		c.charge(amount);
 	}
 	
 	/**

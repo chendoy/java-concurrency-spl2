@@ -88,7 +88,12 @@ public class Customer {
 		return orderSchedule;
 	}
 
-	public void chargeCreditCard(int amountToCharge) {
+	public synchronized boolean canChargeCreditCard(int amountToCharge)
+	{
+		return getAvailableCreditAmount()<amountToCharge;
+	}
+
+	public void charge(int amountToCharge) {
 		creditCardAmount-=amountToCharge;
 	}
 
