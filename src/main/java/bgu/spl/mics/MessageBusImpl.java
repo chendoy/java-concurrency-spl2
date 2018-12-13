@@ -1,6 +1,8 @@
 package bgu.spl.mics;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Queue;
 import java.util.concurrent.*;
 
 /**
@@ -71,6 +73,7 @@ public class MessageBusImpl implements MessageBus {
 				{
 					BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
 					ms_Queue.add(b);
+
 				}
 			}
 			notifyAll();
@@ -80,7 +83,7 @@ public class MessageBusImpl implements MessageBus {
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 
 		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
-		if(candidates_ms!=null) {		//objectResult.compareAndSet(null,result);
+		if(candidates_ms!=null) {
             MicroService ms=candidates_ms.poll();
             Future<T> future=null;
             try
@@ -109,6 +112,7 @@ public class MessageBusImpl implements MessageBus {
 		QueueMap.put(m,newMsgQueue);
 	}
 
+	//TODO: synchronised to prevent situation when the microservice gets new messages while unregistering
 	@Override
 	public void unregister(MicroService m) {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered
