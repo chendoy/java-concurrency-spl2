@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -178,8 +177,9 @@ public class BookStoreRunner {
 
         //------------------------SERVICES LAUNCHING------------------------//
 
-
         inventory.load(books);
+        resourcesHolder.load(vehicles);
+
 
         //creating API service per customer
         webApis=new APIService[customers.length];

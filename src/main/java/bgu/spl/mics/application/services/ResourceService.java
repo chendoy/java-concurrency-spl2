@@ -31,7 +31,9 @@ public class ResourceService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> { Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
+		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> {
+																				System.out.println(super.getName()+" asking resources holder to acquire vehicle");
+																				Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
 																				DeliveryVehicle vehicle = futureVehicle.get();
 																				complete(event,vehicle);});
 

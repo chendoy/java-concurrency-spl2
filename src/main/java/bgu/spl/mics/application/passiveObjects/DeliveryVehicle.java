@@ -38,12 +38,13 @@ public class DeliveryVehicle {
      */
 	public void deliver(String address, int distance) {
 
+		System.out.println("vegicle "+license+" starting delivery to "+address);
 		try {
 			Thread.sleep(speed*distance);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("delivery to "+address+" ended");
 		 }
 
 	}

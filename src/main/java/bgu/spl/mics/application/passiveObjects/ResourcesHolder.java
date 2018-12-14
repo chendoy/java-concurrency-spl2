@@ -16,8 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ResourcesHolder {
 
-	private BlockingQueue<DeliveryVehicle> vehiclesResource;
-	private BlockingQueue<Future<DeliveryVehicle>> futureVehicles;
+	private BlockingQueue<DeliveryVehicle> vehiclesResource; //free vehicles
+	private BlockingQueue<Future<DeliveryVehicle>> futureVehicles; //waiting vehicles
 
 	private static class SingletonHolder{
 		private static ResourcesHolder instance=new ResourcesHolder();
@@ -46,6 +46,7 @@ public class ResourcesHolder {
 		Future<DeliveryVehicle> future=new Future<>();
 
 		synchronized (vehiclesResource) {
+			System.out.println("resource holder trying to acquire vehicle");
 			if(!vehiclesResource.isEmpty()) {
 				DeliveryVehicle vehicle=vehiclesResource.poll();
 				future.resolve(vehicle);
@@ -64,6 +65,7 @@ public class ResourcesHolder {
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
 		synchronized (vehiclesResource) {
+			System.out.println("resource holder trying to release vehicle");
 			if(!futureVehicles.isEmpty()) {
 				//get the future vehicles which waited the most
 				Future<DeliveryVehicle> futureVehicle=futureVehicles.poll();

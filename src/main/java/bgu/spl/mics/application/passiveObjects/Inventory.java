@@ -55,7 +55,6 @@ public class Inventory {
 
 			numOfDistinctBooks++;
 		}
-		System.out.println(booksAmountMap.toString());
 
 
 	}

@@ -91,11 +91,12 @@ public class Customer implements Serializable {
 
 	public synchronized boolean canChargeCreditCard(int amountToCharge)
 	{
-		return getAvailableCreditAmount()<amountToCharge;
+		return getAvailableCreditAmount()>=amountToCharge;
 	}
 
 	public void charge(int amountToCharge) {
 		creditCardAmount-=amountToCharge;
+		System.out.println(getName()+" charged for "+amountToCharge+" NIS");
 	}
 
 }
