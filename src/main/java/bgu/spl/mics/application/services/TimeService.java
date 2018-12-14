@@ -31,7 +31,6 @@ public class TimeService extends MicroService{
 		super("Time Service");
 		this.milliSecForClockTick=milliSecForClockTick;
 		this.duration=duration;
-
 	}
 
 

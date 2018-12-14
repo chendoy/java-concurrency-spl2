@@ -26,7 +26,6 @@ import java.util.concurrent.CountDownLatch;
 public class APIService extends MicroService {
 
 	private int currentTick;
-
 	private ConcurrentHashMap<Integer, ConcurrentLinkedQueue<String>> tickBooksNamesMap;
 	private ConcurrentHashMap<BookOrderEvent,Integer> eventToTickTimeMap;
 	private Customer customer;
@@ -36,16 +35,14 @@ public class APIService extends MicroService {
 	public APIService(Customer customer, int i,CountDownLatch countDownLatch) {
 		super("api "+i);
 		this.countDownLatch=countDownLatch;
-
+		this.customer=customer;
+		tickBooksNamesMap=new ConcurrentHashMap<>(); //do not forget to init the queue on adding new key !!!
+		eventToTickTimeMap=new ConcurrentHashMap<>();
+		initOrderSchedule();
 	}
 
 	@Override
 	protected void initialize() {
-
-		tickBooksNamesMap=new ConcurrentHashMap<>(); //do not forget to init the queue on adding new key !!!
-		eventToTickTimeMap=new ConcurrentHashMap<>();
-		initOrderSchedule();
-		MessageBusImpl.getInstance().register(this);
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
 																				currentTick=tickBroadcast.getCurClockTick();
 																				//checks if there is book to order in that tick
@@ -67,8 +64,6 @@ public class APIService extends MicroService {
 																					}
 
 																			}});
-
-
 
 	countDownLatch.countDown();
 

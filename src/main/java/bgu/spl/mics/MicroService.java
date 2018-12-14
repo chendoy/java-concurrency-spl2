@@ -156,8 +156,9 @@ MicroService implements Runnable {
      */
     @Override
     public final void run() {
-        initialize();
         MessageBusImpl.getInstance().register(this);
+        initialize();
+        System.out.println(getName()+" registerd and now ready to accept Time Ticks");
         while (!terminated) {
             try
             {

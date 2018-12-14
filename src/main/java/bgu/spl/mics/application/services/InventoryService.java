@@ -27,7 +27,6 @@ public class InventoryService extends MicroService {
 	@Override
 	protected void initialize() {
 		this.inventory=Inventory.getInstance();
-		MessageBusImpl.getInstance().register(this);
 		subscribeEvent(CheckAvailability.class,(CheckAvailability checkAvailability)->{
 																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
 																						complete(checkAvailability,available);

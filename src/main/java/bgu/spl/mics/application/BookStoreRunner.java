@@ -1,7 +1,6 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.Coordinator;
-import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
 import com.google.gson.Gson;
@@ -9,14 +8,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -40,14 +39,16 @@ public class BookStoreRunner {
     private static APIService[]webApis;
     private static CountDownLatch latchObject;
     private static Coordinator coordinator;
+    private static HashMap<Integer,Customer> customerHashMap;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
 
-    //------------------------OUTPUT FILES------------------------//
 
-    private HashMap<Integer,Customer> customerHashMap;
 
-    //^^^^^^^^^^^^^^^^^^^^^^^^OUTPUT FILES^^^^^^^^^^^^^^^^^^^^^//
+
+
+    //------------------------JSON PARSING------------------------//
+
 
     public static void main(String[] args) {
 
@@ -178,6 +179,8 @@ public class BookStoreRunner {
             System.out.println("File not found: "+e.getMessage());
         }
 
+        //------------------------SERVICES LAUNCHING------------------------//
+
         inventory.load(books);
         coordinator=new Coordinator(latchObject);
 
@@ -186,23 +189,62 @@ public class BookStoreRunner {
         for(int i=0;i<webApis.length;i++)
             webApis[i]=new APIService(customers[i],i+1,latchObject);
 
-/*
+        /*
         new Thread(coordinator).start();
         for(int i=0;i<sellingServices.length;i=i+1)
             new Thread(sellingServices[i]).start();
 
         for(int i=0;i<webApis.length;i=i+1)
             new Thread(webApis[i]).start();
-*/
-
-        createCustomersOutput();
 
 
+        while (latchObject.getCount()!=0) {
+            System.out.println("not zero yet");
+        }
+        //now all the threads that need to get Ticks initialized, so we can initialize TimeService (and the rest of the threads)
+
+        ExecutorService e = Executors.newFixedThreadPool(1+);
+
+        */
+
+        //------------------------GENERATING OUTPUT FILES------------------------//
+
+        createCustomersHashMap();
+        printCustomersToFile(args[1]);
+        inventory.printInventoryToFile(args[2]);
+        moneyRegister.printOrderReceipts(args[3]);
+        printMoneyRegisterObject(args[4]);
     }
 
-    private static void createCustomersOutput() {
-        for (int i=0;i<customers.length;i++) {
-            customerHashMap
+    //---------------------HELPER STATIC METHODS----------------//
+
+    private static void printCustomersToFile(String filename) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(customerHashMap);
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            System.out.println("Error in customers printing: " + e.toString());
+        }
+    }
+
+    private static void createCustomersHashMap() {
+        customerHashMap=new HashMap<>();
+        for (int i=0;i<customers.length;i++)
+            customerHashMap.put(customers[i].getId(),customers[i]);
+    }
+
+    private static void printMoneyRegisterObject(String filename) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(moneyRegister);
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            System.out.println("Error in moneyRegister printing: " + e.toString());
         }
     }
 }

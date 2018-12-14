@@ -29,7 +29,6 @@ public class ResourceService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		MessageBusImpl.getInstance().register(this);
 		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> { Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
 																				DeliveryVehicle vehicle = futureVehicle.get();
 																				complete(event,vehicle);});

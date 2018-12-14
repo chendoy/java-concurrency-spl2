@@ -38,7 +38,6 @@ public class SellingService extends MicroService {
 	protected void initialize() {
 		MessageToStartEndTimes=new ConcurrentHashMap<>();
 		startProcessTickTime=-1;
-		MessageBusImpl.getInstance().register(this);
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->curTick=tickBroadcast.getCurClockTick());
 		subscribeEvent(BookOrderEvent.class,(BookOrderEvent boe)->{MessageToStartEndTimes.put(boe,new Pair(curTick,null));
 																	CheckAvailability checkAvailability=new CheckAvailability(boe.getBookName());
