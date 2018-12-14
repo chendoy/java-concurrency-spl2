@@ -11,6 +11,7 @@ import bgu.spl.mics.application.passiveObjects.Pair;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -29,10 +30,13 @@ public class APIService extends MicroService {
 	private ConcurrentHashMap<Integer, ConcurrentLinkedQueue<String>> tickBooksNamesMap;
 	private ConcurrentHashMap<BookOrderEvent,Integer> eventToTickTimeMap;
 	private Customer customer;
+	private CountDownLatch countDownLatch;
 
-	public APIService(Customer customer,int i) {
+
+	public APIService(Customer customer, int i,CountDownLatch countDownLatch) {
 		super("api "+i);
-		initialize();
+		this.countDownLatch=countDownLatch;
+
 	}
 
 	@Override
@@ -62,7 +66,14 @@ public class APIService extends MicroService {
 																						tickBooksNamesMap.remove(currentTick);
 																					}
 
-																			}});}
+																			}});
+
+
+
+	countDownLatch.countDown();
+
+	}
+
 
 	private void initOrderSchedule() {
 		List<Pair<String,Integer>> cusOrderSchdule=customer.getOrderSchedule();

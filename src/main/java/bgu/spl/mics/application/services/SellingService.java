@@ -8,6 +8,7 @@ import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.passiveObjects.*;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -21,16 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SellingService extends MicroService {
 
-	private int curBookId;
 	private int curTick=1;
 	private int startProcessTickTime;
 	private ConcurrentHashMap<Message, Pair<Integer,Integer>> MessageToStartEndTimes;
 	private MoneyRegister moneyRegister;
+	private CountDownLatch countDownLatch;
 
-	public SellingService(int i,MoneyRegister moneyRegister) {
+	public SellingService(int i, MoneyRegister moneyRegister, CountDownLatch countDownLatch) {
 		super("selling "+i);
+		this.countDownLatch=countDownLatch;
 		this.moneyRegister=moneyRegister;
-		initialize();
 	}
 
 	@Override
@@ -66,6 +67,7 @@ public class SellingService extends MicroService {
 																		complete(boe,null);
 
 																	});
+		countDownLatch.countDown();
 	}
 
 	public int getStartProcessTickTime(BookOrderEvent order) {

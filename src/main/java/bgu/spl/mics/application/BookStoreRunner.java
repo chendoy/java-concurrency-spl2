@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -38,10 +39,15 @@ public class BookStoreRunner {
     private static Inventory inventory;
     private static APIService[]webApis;
     private static CountDownLatch latchObject;
-    private static int numOfServices=0;
     private static Coordinator coordinator;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
+
+    //------------------------OUTPUT FILES------------------------//
+
+    private HashMap<Integer,Customer> customerHashMap;
+
+    //^^^^^^^^^^^^^^^^^^^^^^^^OUTPUT FILES^^^^^^^^^^^^^^^^^^^^^//
 
     public static void main(String[] args) {
 
@@ -180,16 +186,23 @@ public class BookStoreRunner {
         for(int i=0;i<webApis.length;i++)
             webApis[i]=new APIService(customers[i],i+1,latchObject);
 
-
+/*
         new Thread(coordinator).start();
         for(int i=0;i<sellingServices.length;i=i+1)
             new Thread(sellingServices[i]).start();
 
         for(int i=0;i<webApis.length;i=i+1)
             new Thread(webApis[i]).start();
+*/
+
+        createCustomersOutput();
 
 
+    }
 
-
+    private static void createCustomersOutput() {
+        for (int i=0;i<customers.length;i++) {
+            customerHashMap
+        }
     }
 }

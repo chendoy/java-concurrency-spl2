@@ -4,6 +4,8 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.Events.CheckAvailability;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * InventoryService is in charge of the book inventory and stock.
  * Holds a reference to the {@link Inventory} singleton of the store.
@@ -20,7 +22,6 @@ public class InventoryService extends MicroService {
 
 	public InventoryService(int i) {
 		super("inventory "+i);
-		initialize();
 	}
 
 	@Override

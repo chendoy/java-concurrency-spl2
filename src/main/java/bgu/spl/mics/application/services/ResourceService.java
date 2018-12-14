@@ -7,6 +7,8 @@ import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
  * Holds a reference to the {@link ResourceHolder} singleton of the store.
@@ -23,7 +25,6 @@ public class ResourceService extends MicroService{
 	public ResourceService(int i, ResourcesHolder resourcesHolder) {
 		super("resources "+i);
 		this.resourcesHolder=resourcesHolder;
-		initialize();
 	}
 
 	@Override

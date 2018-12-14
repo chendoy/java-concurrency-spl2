@@ -23,25 +23,32 @@ public class TimeService extends MicroService{
 
 	private AtomicInteger currentTime;
 	private Timer timer;
+	private int milliSecForClockTick;
+	private  int duration;
 
 
 	public TimeService(int milliSecForClockTick,int duration) {
 		super("Time Service");
-		initialize();
-		run(milliSecForClockTick,duration);
+		this.milliSecForClockTick=milliSecForClockTick;
+		this.duration=duration;
+
 	}
 
 
-	//not sure 100%
-	private void run(int milliSecForClockTick,int duration) {
+
+	@Override
+	protected void initialize() {
+		timer=new Timer();
+		currentTime=new AtomicInteger(1);
+
 		//starting count time
 		if(currentTime.get()<=duration) {
-			MessageBusImpl.getInstance().sendBroadcast((new TickBroadcast(currentTime.get())));
+			sendBroadcast((new TickBroadcast(currentTime.get())));
 		}
 
 		timer.schedule(wrap(()-> {
 					if(currentTime.incrementAndGet() <= duration) {
-						MessageBusImpl.getInstance().sendBroadcast(new TickBroadcast(currentTime.get())); }
+						sendBroadcast(new TickBroadcast(currentTime.get())); }
 					else {
 						timer.cancel();
 					}
@@ -49,14 +56,6 @@ public class TimeService extends MicroService{
 		),0,milliSecForClockTick);
 
 
-
-	}
-
-
-	@Override
-	protected void initialize() {
-		timer=new Timer();
-		currentTime=new AtomicInteger(1);
 	}
 
 	private static TimerTask wrap(Runnable r) {
