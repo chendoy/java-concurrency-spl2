@@ -162,8 +162,8 @@ MicroService implements Runnable {
         while (!terminated) {
             try
             {
-                Message m=MessageBusImpl.getInstance().awaitMessage(this);
-                EventCallBackMap.get(m.getClass()).call(m);
+                Message message=MessageBusImpl.getInstance().awaitMessage(this);
+                EventCallBackMap.get(message.getClass()).call(message);
             }
             catch (InterruptedException exp) {System.out.println("thread "+Thread.currentThread().getId()+" interrupted me");}
         }
