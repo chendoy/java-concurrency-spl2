@@ -208,11 +208,8 @@ public class BookStoreRunner {
 
 
         while (latchObject.getCount()!=0) {
-            System.out.println(latchObject.getCount());
-
+            //wait
         }
-
-
 
         //now all the threads that need to get Ticks initialized, so we can initialize TimeService (and the rest of the threads)
         new Thread(timeService).start();

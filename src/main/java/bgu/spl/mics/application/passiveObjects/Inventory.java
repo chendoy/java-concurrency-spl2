@@ -29,7 +29,9 @@ public class Inventory {
 
 	private Inventory() {
 		booksInInventory=new ConcurrentHashMap<>();
+		booksAmountMap=new LinkedHashMap<>();
 		numOfDistinctBooks=0;
+
 	}
 
 		/**
@@ -49,9 +51,13 @@ public class Inventory {
 	public void load (BookInventoryInfo[ ] inventory ) {
 		for (BookInventoryInfo bii:inventory) {
 			booksInInventory.put(bii.getBookTitle(),bii);
-			booksAmountMap=new LinkedHashMap<>();
+			booksAmountMap.put(bii.getBookTitle(),bii.getAmountInInventory());
+
 			numOfDistinctBooks++;
 		}
+		System.out.println(booksAmountMap.toString());
+
+
 	}
 	
 	/**
