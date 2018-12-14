@@ -80,7 +80,7 @@ public class MoneyRegister implements Serializable {
 			fileOut.close();
 		}
 		catch(Exception e) {
-			System.out.println("Error: "+e.getMessage());
+			System.out.println("Error in receipts printing: "+e.toString());
 		}
 	}
 }
