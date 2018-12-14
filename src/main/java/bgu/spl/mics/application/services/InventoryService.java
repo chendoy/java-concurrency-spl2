@@ -17,11 +17,12 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class InventoryService extends MicroService {
-
+	private CountDownLatch countDownLatch;
 	private Inventory inventory;
 
-	public InventoryService(int i) {
+	public InventoryService(int i,CountDownLatch countDownLatch) {
 		super("inventory "+i);
+		this.countDownLatch=countDownLatch;
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class InventoryService extends MicroService {
 																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
 																						complete(checkAvailability,available);
 																					});
+		countDownLatch.countDown();
 	}
 
 }

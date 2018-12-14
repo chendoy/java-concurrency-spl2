@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -38,6 +40,7 @@ public class BookStoreRunner {
     private static CountDownLatch latchObject;
     private static Coordinator coordinator;
     private static HashMap<Integer,Customer> customerHashMap;
+    private static int numOfServices;
 
     //^^^^^^^^^^^^^^^^^^^^^^^^CLASS RESOURCES^^^^^^^^^^^^^^^^^^^^^//
 
@@ -55,19 +58,15 @@ public class BookStoreRunner {
         resourcesHolder=ResourcesHolder.getInstance();
         inventory=Inventory.getInstance();
 
-
         Gson gson=new Gson();
         File jsonFile= Paths.get(args[0]).toFile();
         try {
             JsonObject jsonObject = gson.fromJson(new FileReader(jsonFile), JsonObject.class);
 
-            //first will count number of selling services+webAPIs to init the latchObject
-            JsonObject servicesObject_pre=jsonObject.getAsJsonObject("services");
-            int numOfSellers_pre=servicesObject_pre.get("selling").getAsInt();
-            JsonArray customersArray_pre=servicesObject_pre.getAsJsonArray("customers");
-            int numOfCustomer_pre=customersArray_pre.size();
-            int numOfSellersAndCustomers=numOfSellers_pre+numOfCustomer_pre;
-            latchObject=new CountDownLatch(numOfSellersAndCustomers);
+            //first will count the numbers of services to init CountDownLatch\
+            calculateNumOfServices(jsonObject);
+            latchObject=new CountDownLatch(numOfServices);
+
 
             //getting the whole 'initialInventory' array
             JsonArray bookInventoryInfoArray=jsonObject.getAsJsonArray("initialInventory");
@@ -124,7 +123,7 @@ public class BookStoreRunner {
 
             //creating the inventory services
             for (int i=1;i<=numOfInventoryServices;i++)
-                inventoryServices[i-1]=new InventoryService(i);
+                inventoryServices[i-1]=new InventoryService(i,latchObject);
 
             //parsing logistics services
             int numOfLogisticsServices=servicesObject.get("logistics").getAsInt();
@@ -132,7 +131,7 @@ public class BookStoreRunner {
 
             //creating the logistics services
             for (int i=1;i<=numOfLogisticsServices;i++)
-                logisticsServices[i-1]=new LogisticsService(i);
+                logisticsServices[i-1]=new LogisticsService(i,latchObject);
 
             //parsing resources services
             int numOfResourcesServices=servicesObject.get("resourcesService").getAsInt();
@@ -140,7 +139,7 @@ public class BookStoreRunner {
 
             //creating the resources services
             for (int i=1;i<=numOfResourcesServices;i++)
-                resourceServices[i-1]=new ResourceService(i,resourcesHolder);
+                resourceServices[i-1]=new ResourceService(i,resourcesHolder,latchObject);
 
             JsonArray customersArray=servicesObject.getAsJsonArray("customers");
             customers =new Customer[customersArray.size()];
@@ -177,26 +176,52 @@ public class BookStoreRunner {
             System.out.println("File not found: "+e.getMessage());
         }
 
-    //------------------------SERVICES LAUNCHING------------------------//
+        //------------------------SERVICES LAUNCHING------------------------//
+
 
         inventory.load(books);
-        coordinator=new Coordinator(latchObject);
 
         //creating API service per customer
         webApis=new APIService[customers.length];
         for(int i=0;i<webApis.length;i++)
             webApis[i]=new APIService(customers[i],i+1,latchObject);
 
-/*
+
+        coordinator=new Coordinator(latchObject);
+
+
         new Thread(coordinator).start();
         for(int i=0;i<sellingServices.length;i=i+1)
             new Thread(sellingServices[i]).start();
 
         for(int i=0;i<webApis.length;i=i+1)
             new Thread(webApis[i]).start();
-*/
 
-    //------------------------GENERATING OUTPUT FILES------------------------//
+        for(int i=0;i<inventoryServices.length;i=i+1)
+            new Thread(inventoryServices[i]).start();
+
+        for(int i=0;i<logisticsServices.length;i=i+1)
+            new Thread(logisticsServices[i]).start();
+
+        for(int i=0;i<resourceServices.length;i=i+1)
+            new Thread(resourceServices[i]).start();
+
+
+        while (latchObject.getCount()!=0) {
+            System.out.println(latchObject.getCount());
+
+        }
+
+
+
+        //now all the threads that need to get Ticks initialized, so we can initialize TimeService (and the rest of the threads)
+        new Thread(timeService).start();
+
+
+
+
+
+        //------------------------GENERATING OUTPUT FILES------------------------//
 
         createCustomersHashMap();
         printCustomersToFile(args[1]);
@@ -204,6 +229,7 @@ public class BookStoreRunner {
         moneyRegister.printOrderReceipts(args[3]);
         printMoneyRegisterObject(args[4]);
     }
+
 
     //---------------------HELPER STATIC METHODS----------------//
 
@@ -235,5 +261,23 @@ public class BookStoreRunner {
         } catch (Exception e) {
             System.out.println("Error in moneyRegister printing: " + e.toString());
         }
+    }
+
+    private static void calculateNumOfServices(JsonObject jsonObject) {
+
+        //first "pass" over json file to figure out the overall number of services
+        JsonObject servicesObject_pre=jsonObject.getAsJsonObject("services");
+        int numOfSellers_pre=servicesObject_pre.get("selling").getAsInt();
+        numOfServices+=+numOfSellers_pre;
+        int numOfInventoryServices_pre=servicesObject_pre.get("inventoryService").getAsInt();
+        numOfServices+=numOfInventoryServices_pre;
+        int numOfLogisticsServices_pre=servicesObject_pre.get("logistics").getAsInt();
+        numOfServices+=numOfLogisticsServices_pre;
+        int numOfResourcesServices_pre=servicesObject_pre.get("resourcesService").getAsInt();
+        numOfServices+=numOfResourcesServices_pre;
+        JsonArray customersArray_pre=servicesObject_pre.getAsJsonArray("customers");
+        int numOfCustomer_pre=customersArray_pre.size();
+        numOfServices+=numOfCustomer_pre;
+
     }
 }

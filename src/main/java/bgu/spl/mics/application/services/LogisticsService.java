@@ -23,10 +23,11 @@ import java.util.concurrent.CountDownLatch;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LogisticsService extends MicroService {
+	private CountDownLatch countDownLatch;
 
-	public LogisticsService(int i) {
+	public LogisticsService(int i,CountDownLatch countDownLatch) {
 		super("logistics "+i);
-
+		this.countDownLatch=countDownLatch;
 	}
 
 	@Override
@@ -39,6 +40,7 @@ public class LogisticsService extends MicroService {
 																	sendEvent(releaseVehicleEvent);
 																}
 																);
+		countDownLatch.countDown();
 	}
 
 
