@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
+//customer 2 didnt sucess to order his book ?
 public class APIService extends MicroService {
 
 	private int currentTick;
@@ -46,19 +47,26 @@ public class APIService extends MicroService {
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
 																				currentTick=tickBroadcast.getCurClockTick();
 																				//checks if there is book to order in that tick
+			//System.out.println(customer.getName()+"( "+getName()+")"+" got a clock tick ->"+currentTick+" now will check if the customer have to order books in this tick");
 																				ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
+
 																				if(currentTickBooks!=null) { //this customer has books to order on this schedule
+			//System.out.println( customer.getName()+"( "+getName()+")" +" need to order "+currentTickBooks.size()+" books");
 																					for (String bookName : currentTickBooks) {
 																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
+			//System.out.println(customer.getName()+"( "+getName()+")"+" trying to purchase "+bookName);
 																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
 																						OrderReceipt futureResult=futureOrderRecipt.get();
+
 																						if(futureResult!=null) {
+			//System.out.println(customer.getName()+"( "+getName()+")"+ " successfully purchase "+bookName+" and achieved receipt, sending now Delivery event");
 																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
+
 																							sendEvent(deliveryEvent);
 																						}
 																						else {
-
+			//System.out.println(customer.getName()+"( "+getName()+")"+" purchasing of "+bookName+" failed");
 																						}
 																						tickBooksNamesMap.remove(currentTick);
 																					}

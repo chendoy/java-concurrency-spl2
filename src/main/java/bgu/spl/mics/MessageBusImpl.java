@@ -58,7 +58,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		MicroService microService = messageToMicroServiceMap.get(e);
+		//MicroService microService = messageToMicroServiceMap.get(e);
 		//QueueMap.get(microService).poll();
 		messageToMicroServiceMap.remove(e);
 		messageToFutureMap.get(e).resolve(result);

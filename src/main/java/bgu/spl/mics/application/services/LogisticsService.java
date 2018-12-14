@@ -12,6 +12,7 @@ import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Logistic service in charge of delivering books that have been purchased to customers.
@@ -32,15 +33,24 @@ public class LogisticsService extends MicroService {
 
 	@Override
 	protected void initialize() {
-		subscribeEvent(DeliveryEvent.class,(DeliveryEvent event)-> {
-																	Future<DeliveryVehicle> future = sendEvent(new AcquireVehicleEvent());
-																	DeliveryVehicle acquiredVehicle = future.get();
-																	acquiredVehicle.deliver(event.getCustomer().getAddress(), event.getCustomer().getDistance());
-																	ReleaseVehicleEvent releaseVehicleEvent = new ReleaseVehicleEvent(acquiredVehicle);
-																	sendEvent(releaseVehicleEvent);
-																}
-																);
+		subscribeEvent(DeliveryEvent.class,(DeliveryEvent event)-> checkForCar(event));
 		countDownLatch.countDown();
+	}
+	private void checkForCar(DeliveryEvent event) {
+		AcquireVehicleEvent ev=new AcquireVehicleEvent();
+		Future<DeliveryVehicle> future = sendEvent(ev);
+		System.out.println(getName()+" got an event from webApi of "+event.getCustomer().getName()+" for new delivery now will wait for car to be avilable");
+		DeliveryVehicle acquiredVehicle = future.get();
+		if(acquiredVehicle!=null) {
+			System.out.println(getName()+" found avilable car, now will deliver to customer "+event.getCustomer().getName());
+			acquiredVehicle.deliver(event.getCustomer().getAddress(), event.getCustomer().getDistance());
+			System.out.println(getName()+" done delivery for "+event.getCustomer().getName()+" now will release the vehicle");
+			sendEvent(new ReleaseVehicleEvent(acquiredVehicle));
+		}
+		else { //resend the event
+			String hi="";
+			checkForCar(event);
+		}
 	}
 
 

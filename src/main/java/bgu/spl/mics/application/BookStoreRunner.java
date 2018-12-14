@@ -180,7 +180,7 @@ public class BookStoreRunner {
 
 
         inventory.load(books);
-
+        resourcesHolder.load(vehicles);
         //creating API service per customer
         webApis=new APIService[customers.length];
         for(int i=0;i<webApis.length;i++)

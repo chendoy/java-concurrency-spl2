@@ -158,7 +158,7 @@ MicroService implements Runnable {
     public final void run() {
         MessageBusImpl.getInstance().register(this);
         initialize();
-        System.out.println(getName()+" registerd and now ready to accept Time Ticks");
+        //System.out.println(getName()+" registerd and now ready to accept Time Ticks");
         while (!terminated) {
             try
             {
