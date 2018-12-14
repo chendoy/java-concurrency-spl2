@@ -21,10 +21,12 @@ import java.util.concurrent.CountDownLatch;
 public class ResourceService extends MicroService{
 
 	private ResourcesHolder resourcesHolder;
+	private CountDownLatch countDownLatch;
 
-	public ResourceService(int i, ResourcesHolder resourcesHolder) {
+	public ResourceService(int i, ResourcesHolder resourcesHolder,CountDownLatch countDownLatch) {
 		super("resources "+i);
 		this.resourcesHolder=resourcesHolder;
+		this.countDownLatch=countDownLatch;
 	}
 
 	@Override
@@ -34,6 +36,7 @@ public class ResourceService extends MicroService{
 																				complete(event,vehicle);});
 
 		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> resourcesHolder.releaseVehicle(event.getVehicle()));
+		countDownLatch.countDown();
 	}
 
 
