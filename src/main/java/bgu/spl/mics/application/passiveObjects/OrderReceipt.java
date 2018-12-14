@@ -1,8 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.application.Events.BookOrderEvent;
-import bgu.spl.mics.application.services.APIService;
-import bgu.spl.mics.application.services.SellingService;
+
+import java.io.Serializable;
+
 
 /**
  * Passive data-object representing a receipt that should
@@ -11,7 +12,7 @@ import bgu.spl.mics.application.services.SellingService;
  * <p>
  * You may add fields and methods to this class as you see fit (including public methods).
  */
-public class OrderReceipt {
+public class OrderReceipt implements Serializable {
 	private String bookName;
 	private int price;
 	private Customer customer;

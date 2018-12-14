@@ -38,7 +38,7 @@ public class DeliveryVehicle {
      */
 	public void deliver(String address, int distance) {
 
-		System.out.println("vegicle "+license+" starting delivery to "+address);
+		System.out.println("vehicle "+license+" starting driving to "+address);
 		try {
 			Thread.sleep(speed*distance);
 		} catch (InterruptedException e) {
@@ -47,5 +47,10 @@ public class DeliveryVehicle {
 		System.out.println("delivery to "+address+" ended");
 		 }
 
+		 //toString for debugging - delete this before submission
+			public String toString()
+			{
+				return "{License: "+license+" ,Speed: "+speed+"}";
+			}
 	}
 

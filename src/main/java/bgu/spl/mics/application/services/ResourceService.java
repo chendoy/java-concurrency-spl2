@@ -8,6 +8,7 @@ import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ResourceService is in charge of the store resources - the delivery vehicles.
@@ -32,9 +33,9 @@ public class ResourceService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> {
-																				System.out.println(super.getName()+" asking resources holder to acquire vehicle");
+																				//System.out.println(super.getName()+" asking resources holder to acquire vehicle");
 																				Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
-																				DeliveryVehicle vehicle = futureVehicle.get();
+																				DeliveryVehicle vehicle = futureVehicle.get(2000, TimeUnit.MILLISECONDS);
 																				complete(event,vehicle);});
 
 		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> resourcesHolder.releaseVehicle(event.getVehicle()));

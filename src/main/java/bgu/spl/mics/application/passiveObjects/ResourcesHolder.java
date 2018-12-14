@@ -43,10 +43,10 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		Future<DeliveryVehicle> future=new Future<>();
 
+		Future<DeliveryVehicle> future=new Future<>();
 		synchronized (vehiclesResource) {
-			System.out.println("resource holder trying to acquire vehicle");
+			//System.out.println("resource holder trying to acquire vehicle");
 			if(!vehiclesResource.isEmpty()) {
 				DeliveryVehicle vehicle=vehiclesResource.poll();
 				future.resolve(vehicle);
@@ -65,7 +65,7 @@ public class ResourcesHolder {
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
 		synchronized (vehiclesResource) {
-			System.out.println("resource holder trying to release vehicle");
+			//System.out.println("resource holder trying to release vehicle");
 			if(!futureVehicles.isEmpty()) {
 				//get the future vehicles which waited the most
 				Future<DeliveryVehicle> futureVehicle=futureVehicles.poll();
@@ -74,6 +74,7 @@ public class ResourcesHolder {
 			else
 				vehiclesResource.add(vehicle);
 		}
+		//System.out.println("after release, free vehicles status: "+vehiclesResource.toString());
 	}
 	
 	/**

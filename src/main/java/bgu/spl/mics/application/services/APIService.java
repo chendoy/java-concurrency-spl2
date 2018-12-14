@@ -50,13 +50,13 @@ public class APIService extends MicroService {
 																				if(currentTickBooks!=null) { //this customer has books to order on this schedule
 																					for (String bookName : currentTickBooks) {
 																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
-																						System.out.println(customer.getName()+" wants to order "+bookName);
+																						//System.out.println(customer.getName()+" wants to order "+bookName);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
 																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
 																						OrderReceipt futureResult=futureOrderRecipt.get();
 																						if(futureResult!=null) {
 																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
-																							System.out.println("trying to start delivery: "+customer.getName()+","+bookName);
+																							//System.out.println("trying to start delivery: "+customer.getName()+","+bookName);
 																							sendEvent(deliveryEvent);
 																						}
 																						else {
