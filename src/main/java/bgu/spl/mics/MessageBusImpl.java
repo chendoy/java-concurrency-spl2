@@ -90,7 +90,8 @@ public class MessageBusImpl implements MessageBus {
             Future<T> future=null;
             try
             {
-                candidates_ms.put(ms);
+				System.out.println(candidates_ms==null);
+				candidates_ms.put(ms);
                 future=new Future<>();
                 messageToFutureMap.put(e,future);
             }

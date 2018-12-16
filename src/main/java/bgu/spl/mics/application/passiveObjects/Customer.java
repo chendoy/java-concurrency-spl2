@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class Customer implements Serializable {
 	private int creditCardNumber;
 	private int creditCardAmount;
 	private List<Pair<String,Integer>> orderSchedule;
+	private List<OrderReceipt> orderReceiptList;
 
 	public Customer(int id, String name, String address, int distance, int creditCardNumber, int creditCardAmount, List<Pair<String,Integer>> orderSchedule)
 	{
@@ -28,6 +30,7 @@ public class Customer implements Serializable {
 		this.creditCardNumber=creditCardNumber;
 		this.creditCardAmount=creditCardAmount;
 		this.orderSchedule=orderSchedule;
+		orderReceiptList=new LinkedList<>();
 	}
 
 	/**
@@ -65,8 +68,7 @@ public class Customer implements Serializable {
      * @return A list of receipts.
      */
 	public List<OrderReceipt> getCustomerReceiptList() {
-		// TODO Implement this
-		return null;
+		return orderReceiptList;
 	}
 	
 	/**
@@ -97,6 +99,10 @@ public class Customer implements Serializable {
 	public void charge(int amountToCharge) {
 		creditCardAmount-=amountToCharge;
 		//System.out.println(getName()+" charged for "+amountToCharge+" NIS, "+getAvailableCreditAmount()+" remaining");
+	}
+
+	public void addOrderReceipt(OrderReceipt toAdd){
+		orderReceiptList.add(toAdd);
 	}
 
 

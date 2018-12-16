@@ -61,6 +61,7 @@ public class SellingService extends MicroService {
 																				OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
 																				//System.out.println("receipt issued: "+boe.getBookName()+", "+boe.getCustomer().getName());
 																				moneyRegister.file(newOrderReceipt);
+																				customerToCharge.addOrderReceipt(newOrderReceipt);
 																				complete(boe,newOrderReceipt);
 																			}
 																			else
