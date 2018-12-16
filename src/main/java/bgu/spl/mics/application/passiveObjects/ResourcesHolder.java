@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
+
+import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * <p>
  * You can add ONLY private methods and fields to this class.
  */
-public class ResourcesHolder {
+public class ResourcesHolder implements Serializable {
 
 	private BlockingQueue<DeliveryVehicle> vehiclesResource; //free vehicles
 	private BlockingQueue<Future<DeliveryVehicle>> futureVehicles; //waiting vehicles

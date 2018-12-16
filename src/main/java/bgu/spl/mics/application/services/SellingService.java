@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.Events.CheckAvailability;
@@ -55,6 +56,7 @@ public class SellingService extends MicroService {
 																			OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
 																			if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
 																			{
+																				customerToCharge.charge(avilablity);
 																				//System.out.println(boe.getCustomer().getName()+" successfully taken "+boe.getBookName());
 																				OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
 																				//System.out.println("receipt issued: "+boe.getBookName()+", "+boe.getCustomer().getName());
@@ -65,13 +67,17 @@ public class SellingService extends MicroService {
 																				complete(boe,null);
 																		}
 																		else {
+																			//System.out.println(customerToCharge.getName()+" don't have enough money");
 																			complete(boe,null);
 																		}
 																	}
 																	else
 																		complete(boe,null);
 
+
 																	});
+		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
+
 		countDownLatch.countDown();
 	}
 

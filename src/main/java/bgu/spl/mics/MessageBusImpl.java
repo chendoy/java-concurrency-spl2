@@ -18,7 +18,7 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>> SubscriptionsMap ;
 	private ConcurrentHashMap<Message,MicroService> messageToMicroServiceMap ;
 	private ConcurrentHashMap<Message,Future> messageToFutureMap;
-
+	int c=1;
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance =new MessageBusImpl();
@@ -129,6 +129,9 @@ public class MessageBusImpl implements MessageBus {
 					SubscriptionsMap.get(nextPair.getKey()).remove(m);
 			}
 		}
+		//System.out.println(c+" terminated till now");
+		//c++;
+
 	}
 
 	@Override

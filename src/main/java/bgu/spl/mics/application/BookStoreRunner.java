@@ -191,20 +191,36 @@ public class BookStoreRunner {
 
 
         new Thread(coordinator).start();
-        for(int i=0;i<sellingServices.length;i=i+1)
-            new Thread(sellingServices[i]).start();
 
-        for(int i=0;i<webApis.length;i=i+1)
-            new Thread(webApis[i]).start();
+        for(int i=0;i<sellingServices.length;i=i+1) {
+            Thread t=new Thread(sellingServices[i]);
+            t.start();
+            try{t.join();} catch (Exception e) {}
+        }
 
-        for(int i=0;i<inventoryServices.length;i=i+1)
-            new Thread(inventoryServices[i]).start();
+        for(int i=0;i<webApis.length;i=i+1) {
+            Thread t=new Thread(webApis[i]);
+            t.start();
+            try{t.join();} catch (Exception e) {}
+        }
 
-        for(int i=0;i<logisticsServices.length;i=i+1)
-            new Thread(logisticsServices[i]).start();
+        for(int i=0;i<inventoryServices.length;i=i+1) {
+            Thread t=new Thread(inventoryServices[i]);
+            t.start();
+            try{t.join();} catch (Exception e) {}
+        }
 
-        for(int i=0;i<resourceServices.length;i=i+1)
-            new Thread(resourceServices[i]).start();
+        for(int i=0;i<logisticsServices.length;i=i+1) {
+            Thread t=new Thread(logisticsServices[i]);
+            t.start();
+            try{t.join();} catch (Exception e) {}
+        }
+
+        for(int i=0;i<resourceServices.length;i=i+1) {
+            Thread t=new Thread(resourceServices[i]);
+            t.start();
+            try{t.join();} catch (Exception e) {}
+        }
 
 
         while (latchObject.getCount()!=0) {
@@ -212,34 +228,31 @@ public class BookStoreRunner {
         }
 
         //now all the threads that need to get Ticks initialized, so we can initialize TimeService (and the rest of the threads)
-        new Thread(timeService).start();
+        Thread timeThread=new Thread(timeService);
+        timeThread.start();
 
-
-
+        try{timeThread.join();} catch (Exception e) {}
 
 
         //------------------------GENERATING OUTPUT FILES------------------------//
 
-        createCustomersHashMap();
-        printCustomersToFile(args[1]);
-        inventory.printInventoryToFile(args[2]);
-        moneyRegister.printOrderReceipts(args[3]);
-        printMoneyRegisterObject(args[4]);
+
+
+            createCustomersHashMap();
+            printCustomersToFile(args[1]);
+            inventory.printInventoryToFile(args[2]);
+            moneyRegister.printOrderReceipts(args[3]);
+            printMoneyRegisterObject(args[4]);
+
+
     }
+
 
 
     //---------------------HELPER STATIC METHODS----------------//
 
     private static void printCustomersToFile(String filename) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream(filename);
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(customerHashMap);
-            out.close();
-            fileOut.close();
-        } catch (Exception e) {
-            System.out.println("Error in customers printing: " + e.toString());
-        }
+
     }
 
     private static void createCustomersHashMap() {
@@ -247,6 +260,7 @@ public class BookStoreRunner {
         for (int i=0;i<customers.length;i++)
             customerHashMap.put(customers[i].getId(),customers[i]);
     }
+
 
     private static void printMoneyRegisterObject(String filename) {
         try {
@@ -277,4 +291,5 @@ public class BookStoreRunner {
         numOfServices+=numOfCustomer_pre;
 
     }
+
 }

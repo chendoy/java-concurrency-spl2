@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.Events.DeliveryEvent;
@@ -56,7 +57,7 @@ public class APIService extends MicroService {
 																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
 																						//System.out.println(customer.getName()+" wants to order "+bookName);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
-																						//System.out.println(customer.getName()+": "+eventToTickTimeMap.size());
+																						System.out.println(customer.getName()+": "+eventToTickTimeMap.size());
 																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
 																						OrderReceipt futureResult=futureOrderRecipt.get();
 																						//System.out.println(getName()+" GOT RECEIPT FOR: "+bookName);
@@ -75,7 +76,7 @@ public class APIService extends MicroService {
 
 
 
-
+	subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
 	}
 
 

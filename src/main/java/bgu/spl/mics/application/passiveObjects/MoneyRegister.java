@@ -4,6 +4,9 @@ package bgu.spl.mics.application.passiveObjects;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MoneyRegister implements Serializable {
 
-	private ConcurrentHashMap<Integer,OrderReceipt> receiptsList;
+	private List<OrderReceipt> receiptsList;
 	private int numOfReceipts;
 
 	private static class MoneyRegisterHolder{
@@ -25,7 +28,7 @@ public class MoneyRegister implements Serializable {
 	}
 
 	private MoneyRegister(){
-		receiptsList=new ConcurrentHashMap<>();
+		receiptsList=new LinkedList<>();
 		numOfReceipts=0;
 	}
 
@@ -42,7 +45,7 @@ public class MoneyRegister implements Serializable {
      * @param r		The receipt to save in the money register.
      */
 	public void file (OrderReceipt r) {
-		receiptsList.put(numOfReceipts,r);
+		receiptsList.add(r);
 		numOfReceipts++;
 	}
 	

@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Events.AcquireVehicleEvent;
 import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
@@ -41,6 +42,7 @@ public class ResourceService extends MicroService{
 		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> {
 																				//System.out.println(super.getName()+" got release vehicle event");
 																				resourcesHolder.releaseVehicle(event.getVehicle());});
+		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
 
 					countDownLatch.countDown();
 	}

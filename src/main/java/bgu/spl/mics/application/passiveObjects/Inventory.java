@@ -2,6 +2,7 @@ package bgu.spl.mics.application.passiveObjects;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 
-public class Inventory {
+public class Inventory implements Serializable {
 
 	private ConcurrentHashMap<String,BookInventoryInfo> booksInInventory;
 	private HashMap<String,Integer> booksAmountMap;
@@ -72,6 +73,7 @@ public class Inventory {
 			booksInInventory.get(book).decreaseAmountByOne();
 			Integer amount=booksAmountMap.remove(book);
 			booksAmountMap.put(book,amount-1);
+            System.out.println(booksAmountMap.toString());
 			return OrderResult.SUCCESSFULLY_TAKEN;
 		}
 		else

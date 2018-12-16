@@ -24,6 +24,8 @@ import java.util.concurrent.CountDownLatch;
 public abstract class
 MicroService implements Runnable {
 
+
+
     private boolean terminated = false;
     private final String name;
 
@@ -139,6 +141,7 @@ MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
+
         this.terminated = true;
     }
 
@@ -167,7 +170,9 @@ MicroService implements Runnable {
             }
             catch (InterruptedException exp) {System.out.println("thread "+Thread.currentThread().getId()+" interrupted me");}
         }
+
         MessageBusImpl.getInstance().unregister(this);
+
     }
 
 }

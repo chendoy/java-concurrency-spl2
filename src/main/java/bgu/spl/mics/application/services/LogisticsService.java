@@ -4,6 +4,7 @@ import bgu.spl.mics.Callback;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Events.AcquireVehicleEvent;
 import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
@@ -45,6 +46,7 @@ public class LogisticsService extends MicroService {
 
 
 
+		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
 
 		countDownLatch.countDown();
 	}

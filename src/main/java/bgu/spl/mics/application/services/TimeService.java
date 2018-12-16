@@ -2,6 +2,8 @@ package bgu.spl.mics.application.services;
 
 
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.BookStoreRunner;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 import java.util.Timer;
@@ -48,11 +50,12 @@ public class TimeService extends MicroService{
 					if(currentTime.incrementAndGet() <= duration) {
 						sendBroadcast(new TickBroadcast(currentTime.get())); }
 					else {
+						sendBroadcast(new TerminateBroadcast());
 						timer.cancel();
 					}
 				}
 		),0,milliSecForClockTick);
-
+		terminate();
 
 	}
 

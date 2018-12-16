@@ -96,7 +96,9 @@ public class Customer implements Serializable {
 
 	public void charge(int amountToCharge) {
 		creditCardAmount-=amountToCharge;
-		System.out.println(getName()+" charged for "+amountToCharge+" NIS");
+		//System.out.println(getName()+" charged for "+amountToCharge+" NIS, "+getAvailableCreditAmount()+" remaining");
 	}
+
+
 
 }

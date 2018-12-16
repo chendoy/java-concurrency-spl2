@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.*;
+import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Events.CheckAvailability;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 
@@ -32,6 +33,7 @@ public class InventoryService extends MicroService {
 																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
 																						//System.out.println("inventory service is checking availabilty of: "+checkAvailability.getBookName());
 																						complete(checkAvailability,available);});
+		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
 
 		countDownLatch.countDown();
 	}
