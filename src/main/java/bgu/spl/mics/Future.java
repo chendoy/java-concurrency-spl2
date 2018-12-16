@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Future<T> {
 	private AtomicReference<T> objectResult=new AtomicReference<>();
-	
+	boolean resoledWithNull=false;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
@@ -32,7 +32,7 @@ public class Future<T> {
      */
 	public synchronized T get() {
 
-		while(!isDone())
+		while(!isDone()&&!resoledWithNull)
 			try{this.wait();} catch (InterruptedException exp){}
 		return objectResult.get();
 	}
@@ -42,6 +42,8 @@ public class Future<T> {
      */
 	//synchronized necessary here??
 	public synchronized void resolve (T result) {
+		if(result==null)
+			resoledWithNull=true;
 		objectResult.compareAndSet(null,result);
 		notifyAll();
 	}

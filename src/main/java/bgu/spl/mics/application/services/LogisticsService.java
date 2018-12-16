@@ -39,12 +39,13 @@ public class LogisticsService extends MicroService {
 	private void checkForCar(DeliveryEvent event) {
 		AcquireVehicleEvent ev=new AcquireVehicleEvent();
 		Future<DeliveryVehicle> future = sendEvent(ev);
-		System.out.println(getName()+" got an event from webApi of "+event.getCustomer().getName()+" for new delivery now will wait for car to be avilable");
+		//System.out.println(getName()+" got an event from webApi of "+event.getCustomer().getName()+" for new delivery now will wait for car to be avilable");
 		DeliveryVehicle acquiredVehicle = future.get();
+		String hii="";
 		if(acquiredVehicle!=null) {
-			System.out.println(getName()+" found avilable car, now will deliver to customer "+event.getCustomer().getName());
+			//System.out.println(getName()+" found avilable car, now will deliver to customer "+event.getCustomer().getName());
 			acquiredVehicle.deliver(event.getCustomer().getAddress(), event.getCustomer().getDistance());
-			System.out.println(getName()+" done delivery for "+event.getCustomer().getName()+" now will release the vehicle");
+			//System.out.println(getName()+" done delivery for "+event.getCustomer().getName()+" now will release the vehicle");
 			sendEvent(new ReleaseVehicleEvent(acquiredVehicle));
 		}
 		else { //resend the event

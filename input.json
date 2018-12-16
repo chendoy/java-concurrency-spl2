@@ -17,7 +17,7 @@
     "selling": 6,
     "inventoryService": 3,
     "logistics": 4,
-    "resourcesService": 2,
+    "resourcesService": 3,
     "customers": [
      {
         "id": 123456789,
@@ -27,8 +27,9 @@
         "creditCard":{"number":67890,"amount":88},
         "orderSchedule": [
             {"bookTitle": "Harry Poter", "tick": 3},
-            {"bookTitle": "The Hunger Games", "tick": 3}
-          ]
+            {"bookTitle": "The Hunger Games", "tick": 3},
+            {"bookTitle": "Harry Poter", "tick": 3}
+        ]
       },
     {
         "id": 234567891,
@@ -37,7 +38,8 @@
         "distance":3,
          "creditCard":{"number":453536,"amount":220},
     "orderSchedule": [
-        {"bookTitle": "The Hunger Games", "tick": 3}
+        {"bookTitle": "The Hunger Games", "tick": 3},
+        {"bookTitle": "Harry Poter", "tick": 3}
     ]
     }
   ]

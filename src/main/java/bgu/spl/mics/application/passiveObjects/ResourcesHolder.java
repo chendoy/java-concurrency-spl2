@@ -43,6 +43,7 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
+		//System.out.println("waiting vehicles size: "+futureVehicles.size());
 		Future<DeliveryVehicle> future=new Future<>();
 
 		synchronized (vehiclesResource) {
@@ -54,6 +55,9 @@ public class ResourcesHolder {
 				futureVehicles.add(future);
 		}
 		return future;
+	}
+	public void delete(Future<DeliveryVehicle> future) {
+		futureVehicles.remove(future);
 	}
 	
 	/**
