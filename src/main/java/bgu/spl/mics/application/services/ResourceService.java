@@ -7,6 +7,7 @@ import bgu.spl.mics.application.Events.ReleaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
+import java.sql.SQLOutput;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -35,11 +36,13 @@ public class ResourceService extends MicroService{
 		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> {
 																				//System.out.println(super.getName()+" asking resources holder to acquire vehicle");
 																				Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
-																				DeliveryVehicle vehicle = futureVehicle.get(2000, TimeUnit.MILLISECONDS);
-																				complete(event,vehicle);});
+																				complete(event,futureVehicle);});
 
-		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> resourcesHolder.releaseVehicle(event.getVehicle()));
-		countDownLatch.countDown();
+		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> {
+																				//System.out.println(super.getName()+" got release vehicle event");
+																				resourcesHolder.releaseVehicle(event.getVehicle());});
+
+					countDownLatch.countDown();
 	}
 
 

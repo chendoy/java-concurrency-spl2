@@ -39,35 +39,42 @@ public class APIService extends MicroService {
 		tickBooksNamesMap=new ConcurrentHashMap<>(); //do not forget to init the queue on adding new key !!!
 		eventToTickTimeMap=new ConcurrentHashMap<>();
 		initOrderSchedule();
+
 	}
 
 	@Override
 	protected void initialize() {
+		countDownLatch.countDown();
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
+																					//System.out.println(super.getName()+" GOT TICK "+tickBroadcast.getCurClockTick());
 																				currentTick=tickBroadcast.getCurClockTick();
 																				//checks if there is book to order in that tick
 																				ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
 																				if(currentTickBooks!=null) { //this customer has books to order on this schedule
 																					for (String bookName : currentTickBooks) {
+																						//System.out.println(getName()+" SENT BOE FOR : "+bookName);
 																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
 																						//System.out.println(customer.getName()+" wants to order "+bookName);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
+																						//System.out.println(customer.getName()+": "+eventToTickTimeMap.size());
 																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
 																						OrderReceipt futureResult=futureOrderRecipt.get();
+																						//System.out.println(getName()+" GOT RECEIPT FOR: "+bookName);
 																						if(futureResult!=null) {
 																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
-																							//System.out.println("trying to start delivery: "+customer.getName()+","+bookName);
+																							//System.out.println("WEBAPI trying to start delivery: "+customer.getName()+","+bookName);
 																							sendEvent(deliveryEvent);
 																						}
 																						else {
 
 																						}
-																						tickBooksNamesMap.remove(currentTick);	}}});
+																						tickBooksNamesMap.remove(currentTick);	}}
+
+																									});
 
 
 
 
-	countDownLatch.countDown();
 
 	}
 

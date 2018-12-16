@@ -39,7 +39,8 @@ public class SellingService extends MicroService {
 		MessageToStartEndTimes=new ConcurrentHashMap<>();
 		startProcessTickTime=-1;
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->curTick=tickBroadcast.getCurClockTick());
-		subscribeEvent(BookOrderEvent.class,(BookOrderEvent boe)->{MessageToStartEndTimes.put(boe,new Pair(curTick,null));
+		subscribeEvent(BookOrderEvent.class,(BookOrderEvent boe)->{
+																	MessageToStartEndTimes.put(boe,new Pair(curTick,null));
 																	CheckAvailability checkAvailability=new CheckAvailability(boe.getBookName());
 																	//System.out.println(super.getName()+" want to check availability of "+boe.getBookName()+" for "+boe.getCustomer().getName());
 																	Future<Integer> futureAvailability=sendEvent(checkAvailability);

@@ -168,6 +168,6 @@ MicroService implements Runnable {
             catch (InterruptedException exp) {System.out.println("thread "+Thread.currentThread().getId()+" interrupted me");}
         }
         MessageBusImpl.getInstance().unregister(this);
-
     }
+
 }

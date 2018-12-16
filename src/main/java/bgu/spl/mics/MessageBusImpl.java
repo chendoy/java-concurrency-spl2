@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.services.LogisticsService;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Queue;
@@ -36,7 +38,7 @@ public class MessageBusImpl implements MessageBus {
 
 
 	@Override
-	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+	public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		BlockingQueue<MicroService>event_Subscribers=SubscriptionsMap.get(type);
 		if(event_Subscribers==null) {
 			event_Subscribers = new LinkedBlockingQueue<>();
@@ -46,7 +48,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+	public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		BlockingQueue<MicroService> broadCast_Subscribers=SubscriptionsMap.get(type);
 
 		if(broadCast_Subscribers==null) {
@@ -135,13 +137,18 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		while(m_Queue.isEmpty())
 			this.wait();
-			//should be poll or peek? need to resolve it
+
+		//if(m instanceof LogisticsService)
+			//System.out.println("SIZE OF LOGISTICS QUEUE: "+m_Queue.size());
+
 			return m_Queue.poll();
+
 
 	}
 	private boolean isRegistered(MicroService m) {
 		return QueueMap.get(m)!=null;
 	}
+
 
 
 }
