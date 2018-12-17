@@ -52,28 +52,38 @@ public class SellingService extends MicroService {
 																		int price=avilablity;
 																		boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
 																		if(CanBeCharged) {
-																			//System.out.println(boe.getCustomer().getName()+" can be charged (for taking "+boe.getBookName()+")");
-																			OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
-																			if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
-																			{
-																				customerToCharge.charge(avilablity);
-																				//System.out.println(boe.getCustomer().getName()+" successfully taken "+boe.getBookName());
-																				OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
-																				//System.out.println("receipt issued: "+boe.getBookName()+", "+boe.getCustomer().getName());
-																				moneyRegister.file(newOrderReceipt);
-																				customerToCharge.addOrderReceipt(newOrderReceipt);
-																				complete(boe,newOrderReceipt);
-																			}
-																			else
-																				complete(boe,null);
+
+
+																				//System.out.println(boe.getCustomer().getName()+" can be charged (for taking "+boe.getBookName()+")");
+																				OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
+																				if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
+																				{
+																					moneyRegister.chargeCreditCard(customerToCharge,avilablity);
+																					//System.out.println(boe.getCustomer().getName()+" successfully taken "+boe.getBookName());
+																					OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
+																					System.out.println("receipt issued: "+boe.getBookName()+", "+boe.getCustomer().getName());
+																					moneyRegister.file(newOrderReceipt);
+																					customerToCharge.addOrderReceipt(newOrderReceipt);
+																					complete(boe,newOrderReceipt);
+																				}
+																				else {
+																					System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book not in stock right now ");
+																					complete(boe,null);
+																				}
+
+
+
 																		}
 																		else {
-																			//System.out.println(customerToCharge.getName()+" don't have enough money");
+																			System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> Customer doesn't have enough money in the credit ");
 																			complete(boe,null);
 																		}
 																	}
-																	else
+																	else {
+																		System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book doesn't exist in the store ");
 																		complete(boe,null);
+																	}
+
 
 
 																	});

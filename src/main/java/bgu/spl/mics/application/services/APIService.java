@@ -47,35 +47,31 @@ public class APIService extends MicroService {
 	protected void initialize() {
 		countDownLatch.countDown();
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->{
-																					//System.out.println(super.getName()+" GOT TICK "+tickBroadcast.getCurClockTick());
+																				//System.out.println(super.getName()+" GOT TICK "+tickBroadcast.getCurClockTick());
 																				currentTick=tickBroadcast.getCurClockTick();
 																				//checks if there is book to order in that tick
 																				ConcurrentLinkedQueue<String> currentTickBooks=tickBooksNamesMap.get(currentTick);
 																				if(currentTickBooks!=null) { //this customer has books to order on this schedule
 																					for (String bookName : currentTickBooks) {
-																						System.out.println(getName()+" SENT BOE FOR : "+bookName);
+																						System.out.println(getName()+" ["+customer.getName()+"] "+" SENT BOE FOR : "+bookName);
 																						BookOrderEvent bookOrderEvent=new BookOrderEvent(bookName, customer,this);
-																						System.out.println(customer.getName()+" wants to order "+bookName);
+																						//System.out.println(customer.getName()+" wants to order "+bookName);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
 																						System.out.println(customer.getName()+": "+eventToTickTimeMap.size());
 																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
 																						OrderReceipt futureResult=futureOrderRecipt.get();
-																						System.out.println(getName()+" GOT RECEIPT FOR: "+bookName);
-																						if(futureResult!=null) {
-																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
-																							System.out.println("WEBAPI trying to start delivery: "+customer.getName()+","+bookName);
-																							sendEvent(deliveryEvent);
 
+																						if(futureResult!=null) {
+																							System.out.println(getName()+" ["+customer.getName()+"] "+ "GOT RECEIPT FOR: "+bookName);
+																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
+																							sendEvent(deliveryEvent);
 																						}
 																						else {
-
+																							System.out.println(getName()+" ["+customer.getName()+"] "+ "failed get RECEIPT for: "+bookName);
 																						}
 																						tickBooksNamesMap.remove(currentTick);	}}
 
 																									});
-
-
-
 
 	subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
 	}

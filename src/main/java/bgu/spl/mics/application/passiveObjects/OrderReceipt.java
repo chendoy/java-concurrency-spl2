@@ -38,7 +38,6 @@ public class OrderReceipt implements Serializable {
 	 * Retrieves the orderId of this receipt.
 	 */
 	public int getOrderId() {
-		// TODO Implement this
 		return 0;
 	}
 
@@ -96,5 +95,14 @@ public class OrderReceipt implements Serializable {
 
 	public Customer getCustomer() {
 		return customer;
+	}
+
+	public void printOrderRecipt() {
+		System.out.println(" ----START Printing Order Receipt of "+customer.getId()+" book name: "+bookName+" ---");
+		System.out.println("order tick: "+ orderTick);
+		System.out.println("id : " + getOrderId());
+		System.out.println("price : " + price	);
+		System.out.println("seller : " + sellerName);
+		System.out.println(" ----END Printing Order Receipt of "+customer.getName()+" ---");
 	}
 }

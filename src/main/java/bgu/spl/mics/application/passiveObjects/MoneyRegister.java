@@ -66,6 +66,12 @@ public class MoneyRegister implements Serializable {
 	public void chargeCreditCard(Customer c, int amount) {
 		c.charge(amount);
 	}
+
+	private void printOrderRecipts() {
+		for(OrderReceipt orderReceipt: receiptsList) {
+			orderReceipt.printOrderRecipt();
+		}
+	}
 	
 	/**
      * Prints to a file named @filename a serialized object List<OrderReceipt> which holds all the order receipts 
@@ -79,6 +85,10 @@ public class MoneyRegister implements Serializable {
 			out.writeObject(receiptsList);
 			out.close();
 			fileOut.close();
+			System.out.println("---- START PRINTING ORDER RECEIPTS ---- \n\n");
+			//prinitng to screen
+			printOrderRecipts();
+			System.out.println("---- END PRINTING ORDER RECEIPTS ---- \n\n");
 		}
 		catch(Exception e) {
 			System.out.println("Error in receipts printing: "+e.toString());

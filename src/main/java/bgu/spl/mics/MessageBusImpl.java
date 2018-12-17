@@ -136,7 +136,7 @@ public class MessageBusImpl implements MessageBus {
 				if(m instanceof LogisticsService &&!isMoreDelivery())
 					sendBroadcast(new TerminateResourceService());
 			}
-
+			System.out.println(m.getName()+" terminating");
 		}
 		//System.out.println(c+" terminated till now");
 		//c++;

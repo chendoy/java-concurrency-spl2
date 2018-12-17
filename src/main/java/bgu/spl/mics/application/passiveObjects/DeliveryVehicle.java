@@ -40,13 +40,12 @@ public class DeliveryVehicle implements Serializable {
      */
 	public void deliver(String address, int distance) {
 
-		System.out.println("VEHICLE "+license+" STARTING DRIVING TO "+address);
+		System.out.println("veichle "+license+" starting delivery,going to sleep for "+speed*distance+" millisec");
 		try {
 			Thread.sleep(speed*distance);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("DELIVERY TO "+address+" ENDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		 }
 
 		 //toString for debugging - delete this before submission

@@ -105,6 +105,17 @@ public class Customer implements Serializable {
 		orderReceiptList.add(toAdd);
 	}
 
+	public void printCustomer() {
+		System.out.println(" ----START Printing Customer ---");
+		System.out.println("customer id : "+ id);
+		System.out.println("customer name : " + name);
+		System.out.println("customer addr : " + address);
+		System.out.println("customer dist : " + distance);
+		System.out.println("customer card : " + creditCardNumber);
+		System.out.println("customer money : " + creditCardAmount);
+		System.out.println(" ---- END Printing Customer ---");
 
+
+	}
 
 }

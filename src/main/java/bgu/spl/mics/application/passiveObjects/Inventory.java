@@ -61,7 +61,7 @@ public class Inventory implements Serializable {
 
 
 	}
-	
+
 	/**
      * Attempts to take one book from the store.
      * <p>
@@ -95,7 +95,11 @@ public class Inventory implements Serializable {
 				return booksInInventory.get(book).getPrice();
 		return -1;
 	}
-	
+	private void printBooksInInvetory() {
+		for (BookInventoryInfo bookInventoryInfo:booksInInventory.values()){
+			bookInventoryInfo.printbookInventoryInfo();
+		}
+	}
 	/**
      * 
      * <p>
@@ -112,6 +116,10 @@ public class Inventory implements Serializable {
 			out.writeObject(booksAmountMap);
 			out.close();
 			fileOut.close();
+			//prinitng to screen
+			System.out.println("----START PRINTING  BOOK INVENTORY INFO---- \n\n");
+			printBooksInInvetory();
+			System.out.println("----END PRINTING BOOK INVENTORY INFO---- \n\n");
 		}
 		catch(Exception e) {
 			System.out.println("Error in books printing: "+e.toString());
