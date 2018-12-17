@@ -38,8 +38,8 @@ public class LogisticsService extends MicroService {
 																	//System.out.println(super.getName()+" trying to acquire vehicle");
 																	DeliveryVehicle acquiredVehicle = future.get().get();
 																	acquiredVehicle.deliver(event.getCustomer().getAddress(), event.getCustomer().getDistance());
-
-																	//System.out.println(super.getName()+" trying to release vehicle");
+																	complete(event,null);
+																	System.out.println(super.getName()+" trying to release vehicle");
 																	sendEvent(new ReleaseVehicleEvent(acquiredVehicle));
 
 																	});

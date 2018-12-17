@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.Broadcasts.TerminateResourceService;
+import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.services.LogisticsService;
 
 import java.util.HashMap;
@@ -121,6 +123,7 @@ public class MessageBusImpl implements MessageBus {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered
 			for(Message message : QueueMap.get(m)) {
 				messageToMicroServiceMap.remove(message);
+				messageToFutureMap.remove(message);
 			}
 			QueueMap.remove(m);
 			Iterator it =SubscriptionsMap.entrySet().iterator();
@@ -129,6 +132,8 @@ public class MessageBusImpl implements MessageBus {
 				if(((BlockingQueue<MicroService>)nextPair.getValue()).contains(m))
 					SubscriptionsMap.get(nextPair.getKey()).remove(m);
 			}
+			if(m instanceof LogisticsService &&!isMoreDelivery())
+				sendBroadcast(new TerminateResourceService());
 		}
 		//System.out.println(c+" terminated till now");
 		//c++;
@@ -151,6 +156,14 @@ public class MessageBusImpl implements MessageBus {
 	}
 	private boolean isRegistered(MicroService m) {
 		return QueueMap.get(m)!=null;
+	}
+
+	private boolean isMoreDelivery() {
+		for(Message message : messageToFutureMap.keySet()) {
+			if(message instanceof DeliveryEvent)
+				return true;
+		}
+		return false;
 	}
 
 

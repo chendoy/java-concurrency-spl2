@@ -33,7 +33,9 @@ public class InventoryService extends MicroService {
 																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
 																						//System.out.println("inventory service is checking availabilty of: "+checkAvailability.getBookName());
 																						complete(checkAvailability,available);});
-		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{terminate();});
+		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{
+
+			terminate();});
 
 		countDownLatch.countDown();
 	}

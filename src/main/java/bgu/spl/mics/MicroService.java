@@ -172,7 +172,7 @@ MicroService implements Runnable {
         }
 
         MessageBusImpl.getInstance().unregister(this);
-
+        System.out.println(getName()+" terminated");
     }
 
 }

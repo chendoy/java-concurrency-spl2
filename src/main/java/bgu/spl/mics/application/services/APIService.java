@@ -65,6 +65,7 @@ public class APIService extends MicroService {
 																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
 																							//System.out.println("WEBAPI trying to start delivery: "+customer.getName()+","+bookName);
 																							sendEvent(deliveryEvent);
+
 																						}
 																						else {
 

@@ -16,14 +16,14 @@
       "vehicles": [
         {
           "license": 123483,
-          "speed": 400
+          "speed": 100
         }
       ]
     }
   ],
   "services": {
     "time": {
-      "speed": 1000,
+      "speed": 100,
       "duration": 14
     },
     "selling": 6,
@@ -35,7 +35,7 @@
         "id": 123456789,
         "name": "yuval",
         "address": "ness-ziona 123",
-        "distance": 33,
+        "distance": 15,
         "creditCard": {
           "number": 67890,
           "amount": 1000000
