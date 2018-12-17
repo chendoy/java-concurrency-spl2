@@ -85,6 +85,8 @@ public class ResourcesHolder implements Serializable {
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
 	public void load(DeliveryVehicle[] vehicles) {
+		vehiclesResource.clear();
+		futureVehicles.clear();
 		for (DeliveryVehicle v:vehicles) {
 			vehiclesResource.add(v);
 		}

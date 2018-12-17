@@ -50,6 +50,8 @@ public class Inventory implements Serializable {
      * 						of the inventory.
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
+		booksAmountMap.clear();
+		booksInInventory.clear();
 		for (BookInventoryInfo bii:inventory) {
 			booksInInventory.put(bii.getBookTitle(),bii);
 			booksAmountMap.put(bii.getBookTitle(),bii.getAmountInInventory());
@@ -73,7 +75,7 @@ public class Inventory implements Serializable {
 			booksInInventory.get(book).decreaseAmountByOne();
 			Integer amount=booksAmountMap.remove(book);
 			booksAmountMap.put(book,amount-1);
-            System.out.println(booksAmountMap.toString());
+            //System.out.println(booksAmountMap.toString());
 			return OrderResult.SUCCESSFULLY_TAKEN;
 		}
 		else

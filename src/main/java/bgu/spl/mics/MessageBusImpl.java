@@ -27,6 +27,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	private MessageBusImpl() {
+
 		QueueMap=new ConcurrentHashMap<>();
 		SubscriptionsMap=new ConcurrentHashMap<>();
 		messageToMicroServiceMap=new ConcurrentHashMap<>();
@@ -76,8 +77,8 @@ public class MessageBusImpl implements MessageBus {
 			for (MicroService ms : bSubscriptionsQueue) {
 				{
 					BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
-					ms_Queue.add(b);
-
+					if(ms_Queue!=null)
+						ms_Queue.add(b);
 				}
 			}
 			notifyAll();
@@ -92,7 +93,6 @@ public class MessageBusImpl implements MessageBus {
             Future<T> future=null;
             try
             {
-				System.out.println(candidates_ms==null);
 				candidates_ms.put(ms);
                 future=new Future<>();
                 messageToFutureMap.put(e,future);
@@ -119,7 +119,7 @@ public class MessageBusImpl implements MessageBus {
 
 	//TODO: synchronised to prevent situation when the microservice gets new messages while unregistering
 	@Override
-	public void unregister(MicroService m) {
+	public  void unregister(MicroService m) {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered
 			for(Message message : QueueMap.get(m)) {
 				messageToMicroServiceMap.remove(message);
@@ -132,8 +132,11 @@ public class MessageBusImpl implements MessageBus {
 				if(((BlockingQueue<MicroService>)nextPair.getValue()).contains(m))
 					SubscriptionsMap.get(nextPair.getKey()).remove(m);
 			}
-			if(m instanceof LogisticsService &&!isMoreDelivery())
-				sendBroadcast(new TerminateResourceService());
+			synchronized (this) {
+				if(m instanceof LogisticsService &&!isMoreDelivery())
+					sendBroadcast(new TerminateResourceService());
+			}
+
 		}
 		//System.out.println(c+" terminated till now");
 		//c++;
