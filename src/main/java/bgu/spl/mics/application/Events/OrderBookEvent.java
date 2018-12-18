@@ -1,7 +1,6 @@
-package bgu.spl.mics.application.Messages;
+package bgu.spl.mics.application.Events;
 
 import bgu.spl.mics.Event;
-import bgu.spl.mics.Message;
 
 public class OrderBookEvent implements Event<OrderBookEvent>{
 }

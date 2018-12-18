@@ -45,15 +45,18 @@ public class SellingService extends MicroService {
 																	CheckAvailability checkAvailability=new CheckAvailability(boe.getBookName());
 																	//System.out.println(super.getName()+" want to check availability of "+boe.getBookName()+" for "+boe.getCustomer().getName());
 																	Future<Integer> futureAvailability=sendEvent(checkAvailability);
-																	Integer avilablity=futureAvailability.get();
-																	if(avilablity!=-1) {
-																		//System.out.println(boe.getBookName()+" is available for "+boe.getCustomer().getName());
-																		Customer customerToCharge=boe.getCustomer();
-																		int price=avilablity;
-																		boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
-																		if(CanBeCharged) {
+																	if(futureAvailability!=null)  // checks if InventorySrevice unregistered himself
+																	{
+																		Integer avilablity=futureAvailability.get();
+																		if(avilablity!=null)
+																		{
 
-
+																		if(avilablity!=-1) {
+																			//System.out.println(boe.getBookName()+" is available for "+boe.getCustomer().getName());
+																			Customer customerToCharge=boe.getCustomer();
+																			int price=avilablity;
+																			boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
+																			if(CanBeCharged) {
 																				//System.out.println(boe.getCustomer().getName()+" can be charged (for taking "+boe.getBookName()+")");
 																				OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
 																				if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
@@ -73,15 +76,24 @@ public class SellingService extends MicroService {
 
 
 
+																			}
+																			else {
+																				System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> Customer doesn't have enough money in the credit ");
+																				complete(boe,null);
+																			}
 																		}
 																		else {
-																			System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> Customer doesn't have enough money in the credit ");
+																			System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book doesn't exist in the store ");
 																			complete(boe,null);
 																		}
-																	}
-																	else {
-																		System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book doesn't exist in the store ");
+
+																		} else {
+																			complete(boe,null);
+																		}
+
+																	} else { // in this case inventoryService unregistered himself so it returned null
 																		complete(boe,null);
+
 																	}
 
 

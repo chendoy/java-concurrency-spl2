@@ -3,6 +3,7 @@ package bgu.spl.mics;
 import bgu.spl.mics.application.Broadcasts.TerminateResourceService;
 import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.services.LogisticsService;
+import bgu.spl.mics.application.services.SellingService;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -88,7 +89,7 @@ public class MessageBusImpl implements MessageBus {
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 
 		BlockingQueue <MicroService> candidates_ms=SubscriptionsMap.get(e.getClass());
-		if(candidates_ms!=null) {
+		if(candidates_ms!=null&&candidates_ms.size()>0) {
             MicroService ms=candidates_ms.poll();
             Future<T> future=null;
             try
@@ -100,9 +101,14 @@ public class MessageBusImpl implements MessageBus {
             catch (InterruptedException ex) {}
 
             BlockingQueue<Message> ms_Queue=QueueMap.get(ms);
-            ms_Queue.add(e);
-            notifyAll();
-            return future;
+            if(ms_Queue!=null) {
+				ms_Queue.add(e);
+				notifyAll();
+				return future;
+			} else {
+            	return null;
+			}
+
         }
 		else {
 		    return null;
@@ -122,8 +128,11 @@ public class MessageBusImpl implements MessageBus {
 	public  void unregister(MicroService m) {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered
 			for(Message message : QueueMap.get(m)) {
+				if(messageToFutureMap.get(message)!=null) {
+					messageToFutureMap.get(message).resolve(null);
+					messageToFutureMap.remove(message);
+				}
 				messageToMicroServiceMap.remove(message);
-				messageToFutureMap.remove(message);
 			}
 			QueueMap.remove(m);
 			Iterator it =SubscriptionsMap.entrySet().iterator();

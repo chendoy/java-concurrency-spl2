@@ -58,17 +58,27 @@ public class APIService extends MicroService {
 																						//System.out.println(customer.getName()+" wants to order "+bookName);
 																						eventToTickTimeMap.put(bookOrderEvent,currentTick);
 																						System.out.println(customer.getName()+": "+eventToTickTimeMap.size());
-																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent);
-																						OrderReceipt futureResult=futureOrderRecipt.get();
-
-																						if(futureResult!=null) {
-																							System.out.println(getName()+" ["+customer.getName()+"] "+ "GOT RECEIPT FOR: "+bookName);
-																							DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
-																							sendEvent(deliveryEvent);
+																						Future<OrderReceipt>futureOrderRecipt=sendEvent(bookOrderEvent); //if all selling service unregistered themself it will return null
+																						if(futureOrderRecipt!=null){
+																							OrderReceipt futureResult=futureOrderRecipt.get();
+																							String imStuckHere="";
+																							if(futureResult!=null) {
+																								System.out.println(getName()+" ["+customer.getName()+"] "+ "GOT RECEIPT FOR: "+bookName);
+																								DeliveryEvent deliveryEvent=new DeliveryEvent(customer);
+																								sendEvent(deliveryEvent);
+																							}
+																							else {
+																								System.out.println(getName()+" ["+customer.getName()+"] "+ "failed get RECEIPT for: "+bookName);
+																							}
 																						}
 																						else {
-																							System.out.println(getName()+" ["+customer.getName()+"] "+ "failed get RECEIPT for: "+bookName);
+																							// all the selling event unRegistered, so dont deliver anything keep reading messages and unregister yourself
+
 																						}
+
+
+
+
 																						tickBooksNamesMap.remove(currentTick);	}}
 
 																									});
