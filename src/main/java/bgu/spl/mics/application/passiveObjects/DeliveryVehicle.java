@@ -40,7 +40,6 @@ public class DeliveryVehicle implements Serializable {
      */
 	public void deliver(String address, int distance) {
 
-		System.out.println("veichle "+license+" starting delivery,going to sleep for "+speed*distance+" millisec");
 		try {
 			Thread.sleep(speed*distance);
 		} catch (InterruptedException e) {
@@ -48,10 +47,5 @@ public class DeliveryVehicle implements Serializable {
 		}
 		 }
 
-		 //toString for debugging - delete this before submission
-			public String toString()
-			{
-				return "{License: "+license+" ,Speed: "+speed+"}";
-			}
 	}
 

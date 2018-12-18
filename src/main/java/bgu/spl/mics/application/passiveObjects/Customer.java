@@ -83,9 +83,6 @@ public class Customer implements Serializable {
 	/**
      * Retrieves this customers credit card serial number.    
      */
-	public int getCreditNumber() {
-		return creditCardNumber;
-	}
 
 	public List<Pair<String, Integer>> getOrderSchedule() {
 		return orderSchedule;
@@ -98,24 +95,11 @@ public class Customer implements Serializable {
 
 	public void charge(int amountToCharge) {
 		creditCardAmount-=amountToCharge;
-		//System.out.println(getName()+" charged for "+amountToCharge+" NIS, "+getAvailableCreditAmount()+" remaining");
 	}
 
 	public void addOrderReceipt(OrderReceipt toAdd){
 		orderReceiptList.add(toAdd);
 	}
 
-	public void printCustomer() {
-		System.out.println(" ----START Printing Customer ---");
-		System.out.println("customer id : "+ id);
-		System.out.println("customer name : " + name);
-		System.out.println("customer addr : " + address);
-		System.out.println("customer dist : " + distance);
-		System.out.println("customer card : " + creditCardNumber);
-		System.out.println("customer money : " + creditCardAmount);
-		System.out.println(" ---- END Printing Customer ---");
-
-
-	}
 
 }

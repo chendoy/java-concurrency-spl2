@@ -2,6 +2,10 @@ package bgu.spl.mics.application.passiveObjects;
 
 import java.io.Serializable;
 
+
+/*
+this is Pair implementation that is used in the project
+ */
 public class Pair<K,V> implements Serializable {
 
     private K key;

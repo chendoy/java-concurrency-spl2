@@ -22,7 +22,6 @@ public class Inventory implements Serializable {
 
 	private ConcurrentHashMap<String,BookInventoryInfo> booksInInventory;
 	private HashMap<String,Integer> booksAmountMap;
-	private int numOfDistinctBooks;
 
 	private static class InventoryHolder {
 		private static Inventory instance = new Inventory();
@@ -31,7 +30,6 @@ public class Inventory implements Serializable {
 	private Inventory() {
 		booksInInventory=new ConcurrentHashMap<>();
 		booksAmountMap=new LinkedHashMap<>();
-		numOfDistinctBooks=0;
 
 	}
 
@@ -55,8 +53,6 @@ public class Inventory implements Serializable {
 		for (BookInventoryInfo bii:inventory) {
 			booksInInventory.put(bii.getBookTitle(),bii);
 			booksAmountMap.put(bii.getBookTitle(),bii.getAmountInInventory());
-
-			numOfDistinctBooks++;
 		}
 
 
@@ -75,7 +71,6 @@ public class Inventory implements Serializable {
 			booksInInventory.get(book).decreaseAmountByOne();
 			Integer amount=booksAmountMap.remove(book);
 			booksAmountMap.put(book,amount-1);
-            //System.out.println(booksAmountMap.toString());
 			return OrderResult.SUCCESSFULLY_TAKEN;
 		}
 		else
@@ -95,11 +90,7 @@ public class Inventory implements Serializable {
 				return booksInInventory.get(book).getPrice();
 		return -1;
 	}
-	private void printBooksInInvetory() {
-		for (BookInventoryInfo bookInventoryInfo:booksInInventory.values()){
-			bookInventoryInfo.printbookInventoryInfo();
-		}
-	}
+
 	/**
      * 
      * <p>
@@ -116,10 +107,6 @@ public class Inventory implements Serializable {
 			out.writeObject(booksAmountMap);
 			out.close();
 			fileOut.close();
-			//prinitng to screen
-			System.out.println("----START PRINTING  BOOK INVENTORY INFO---- \n\n");
-			printBooksInInvetory();
-			System.out.println("----END PRINTING BOOK INVENTORY INFO---- \n\n");
 		}
 		catch(Exception e) {
 			System.out.println("Error in books printing: "+e.toString());

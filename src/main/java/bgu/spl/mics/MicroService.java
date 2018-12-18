@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -161,8 +160,6 @@ MicroService implements Runnable {
     public final void run() {
         MessageBusImpl.getInstance().register(this);
         initialize();
-        //System.out.println(getName()+" ---> "+Thread.currentThread());
-        //System.out.println(getName()+" registerd and now ready to accept Time Ticks");
         while (!terminated) {
             try
             {

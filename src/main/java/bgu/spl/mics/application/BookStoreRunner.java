@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -216,7 +215,7 @@ public class BookStoreRunner {
         }
 
 
-        while (latchObject.getCount() != 0) {
+        while (latchObject.getCount() != 0) { //wait for latch to complete
 
         }
 
@@ -245,11 +244,7 @@ public class BookStoreRunner {
         printMoneyRegisterObject(args[4]);
 
     }
-        private static void printCustomersToScrenn () {
-            for (Customer cus : customerHashMap.values()) {
-                cus.printCustomer();
-            }
-        }
+
 
 
     //---------------------HELPER STATIC METHODS----------------//
@@ -262,10 +257,6 @@ public class BookStoreRunner {
             out.writeObject(customerHashMap);
             out.close();
             fileOut.close();
-            //prinitng for debug
-            System.out.println("----START PRINTING CUSTOMER---- \n\n");
-            printCustomersToScrenn();
-            System.out.println("----END PRINTING CUSTOMER----- \n\n");
         } catch (Exception e) {
             System.out.println("Error in moneyRegister printing: " + e.toString());
         }
@@ -285,9 +276,6 @@ public class BookStoreRunner {
             out.writeObject(moneyRegister);
             out.close();
             fileOut.close();
-            //prinitng to screen
-            System.out.println("----START PRINTING TOTAL EARNING ---- \n\n");
-            System.out.println("Total Earning of MoneyRegister "+moneyRegister.getTotalEarnings());
 
         } catch (Exception e) {
             System.out.println("Error in moneyRegister printing: " + e.toString());
@@ -311,19 +299,5 @@ public class BookStoreRunner {
         numOfServices += numOfCustomer_pre;
 
     }
-
-
-    /*//DUBUGGING - DESERIALIZE
-    private static void deserialize(String fileName) {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(new File(fileName));
-            ObjectInputStream stream = new ObjectInputStream(fileInputStream);
-            for (Customer customer : stream.readObject()) {
-                String Name = customer.getUserId();
-            }
-        }
-        catch (Exception e){}
-    }
-}*/
 
 }

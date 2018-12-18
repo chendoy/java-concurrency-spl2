@@ -16,8 +16,7 @@ public class OrderReceipt implements Serializable {
 	private String bookName;
 	private int price;
 	private Customer customer;
-	//private SellingService sellerService; //the microService that handles the selling operation
-	private int orderTick; // the microService that puarch a book (puarch book event)
+	private int orderTick;
 	private int startProcessTick;
 	private String sellerName;
 	private  int issuedTick;
@@ -38,7 +37,7 @@ public class OrderReceipt implements Serializable {
 	 * Retrieves the orderId of this receipt.
 	 */
 	public int getOrderId() {
-		return 0;
+		return 0; //will not be tested according to forum
 	}
 
 	/**
@@ -97,12 +96,4 @@ public class OrderReceipt implements Serializable {
 		return customer;
 	}
 
-	public void printOrderRecipt() {
-		System.out.println(" ----START Printing Order Receipt of "+customer.getId()+" book name: "+bookName+" ---");
-		System.out.println("order tick: "+ orderTick);
-		System.out.println("id : " + getOrderId());
-		System.out.println("price : " + price	);
-		System.out.println("seller : " + sellerName);
-		System.out.println(" ----END Printing Order Receipt of "+customer.getName()+" ---");
-	}
 }

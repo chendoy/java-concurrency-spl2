@@ -10,13 +10,7 @@ public class BookOrderEvent implements Event<OrderReceipt> {
     private String bookName;
     private Customer customer;
 
-
-
     private APIService apiService;
-
-    public OrderReceipt getOrderReceipt() {
-        return orderReceipt;
-    }
 
     private OrderReceipt orderReceipt;
 
@@ -25,9 +19,6 @@ public class BookOrderEvent implements Event<OrderReceipt> {
         this.customer=customer;
         this.apiService=apiService;
         orderReceipt=null;
-    }
-    public void setRecipt(OrderReceipt orderReceipt) {
-        this.orderReceipt=orderReceipt;
     }
 
     public Customer getCustomer() {

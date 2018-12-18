@@ -12,11 +12,4 @@ public class AcquireVehicleEvent implements Event<Future<DeliveryVehicle>> {
         this.vehicle=null;
     }
 
-    public void setVehicle(DeliveryVehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public DeliveryVehicle getVehicle() {
-        return vehicle;
-    }
 }

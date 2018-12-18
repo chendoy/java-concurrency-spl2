@@ -15,8 +15,4 @@ public class CheckAvailability implements Event<Integer> {
     public String getBookName() {
         return bookName;
     }
-
-    public Integer getAvailable() {
-        return available;
-    }
 }

@@ -53,13 +53,5 @@ public class BookInventoryInfo implements Serializable {
 
 	public void decreaseAmountByOne() {amountInInventory--;}
 
-	//delete after debugg
-	public void printbookInventoryInfo() {
-		System.out.println(" ----START Printing BookInventoryInfo of "+getBookTitle()+" ---");
-		System.out.println("book title: "+ getBookTitle());
-		System.out.println("amount : " + getAmountInInventory());
-		System.out.println("price : " + getPrice()	);
-		System.out.println(" ----END Printing BookInventoryInfo of "+getBookTitle()+" ---");
-	}
 
 }

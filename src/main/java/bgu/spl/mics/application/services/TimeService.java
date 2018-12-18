@@ -2,7 +2,6 @@ package bgu.spl.mics.application.services;
 
 
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.BookStoreRunner;
 import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;

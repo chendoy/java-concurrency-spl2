@@ -3,11 +3,7 @@ package bgu.spl.mics;
 import bgu.spl.mics.application.Broadcasts.TerminateResourceService;
 import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.services.LogisticsService;
-import bgu.spl.mics.application.services.SellingService;
-
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Queue;
 import java.util.concurrent.*;
 
 /**
@@ -21,7 +17,6 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<Class<? extends Message>, BlockingQueue<MicroService>> SubscriptionsMap ;
 	private ConcurrentHashMap<Message,MicroService> messageToMicroServiceMap ;
 	private ConcurrentHashMap<Message,Future> messageToFutureMap;
-	int c=1;
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance =new MessageBusImpl();
@@ -64,8 +59,6 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void complete(Event<T> e, T result) {
-		MicroService microService = messageToMicroServiceMap.get(e);
-		//QueueMap.get(microService).poll();
 		messageToMicroServiceMap.remove(e);
 		messageToFutureMap.get(e).resolve(result);
 		messageToFutureMap.remove(e);
@@ -123,9 +116,8 @@ public class MessageBusImpl implements MessageBus {
 		QueueMap.put(m,newMsgQueue);
 	}
 
-	//TODO: synchronised to prevent situation when the microservice gets new messages while unregistering
 	@Override
-	public  void unregister(MicroService m) {
+	public void unregister(MicroService m) {
 		if(isRegistered(m)) { //perform unregistration only if the ms was registered
 			for(Message message : QueueMap.get(m)) {
 				if(messageToFutureMap.get(message)!=null) {
@@ -145,10 +137,7 @@ public class MessageBusImpl implements MessageBus {
 				if(m instanceof LogisticsService &&!isMoreDelivery())
 					sendBroadcast(new TerminateResourceService());
 			}
-			System.out.println(m.getName()+" terminating");
 		}
-		//System.out.println(c+" terminated till now");
-		//c++;
 
 	}
 
@@ -158,9 +147,6 @@ public class MessageBusImpl implements MessageBus {
 		if(!isRegistered(m)) throw new IllegalStateException();
 		while(m_Queue.isEmpty())
 			this.wait();
-
-		//if(m instanceof LogisticsService)
-			//System.out.println("SIZE OF LOGISTICS QUEUE: "+m_Queue.size());
 
 			return m_Queue.poll();
 
@@ -177,7 +163,6 @@ public class MessageBusImpl implements MessageBus {
 		}
 		return false;
 	}
-
 
 
 }

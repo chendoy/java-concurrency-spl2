@@ -5,7 +5,6 @@ import bgu.spl.mics.application.Broadcasts.TerminateBroadcast;
 import bgu.spl.mics.application.Broadcasts.TickBroadcast;
 import bgu.spl.mics.application.Events.BookOrderEvent;
 import bgu.spl.mics.application.Events.CheckAvailability;
-import bgu.spl.mics.application.Events.DeliveryEvent;
 import bgu.spl.mics.application.passiveObjects.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +23,6 @@ import java.util.concurrent.CountDownLatch;
 public class SellingService extends MicroService {
 
 	private int curTick=1;
-	private int startProcessTickTime;
 	private ConcurrentHashMap<Message, Pair<Integer,Integer>> MessageToStartEndTimes;
 	private MoneyRegister moneyRegister;
 	private CountDownLatch countDownLatch;
@@ -38,12 +36,10 @@ public class SellingService extends MicroService {
 	@Override
 	protected void initialize() {
 		MessageToStartEndTimes=new ConcurrentHashMap<>();
-		startProcessTickTime=-1;
 		subscribeBroadcast(TickBroadcast.class,(TickBroadcast tickBroadcast)->curTick=tickBroadcast.getCurClockTick());
 		subscribeEvent(BookOrderEvent.class,(BookOrderEvent boe)->{
 																	MessageToStartEndTimes.put(boe,new Pair(curTick,null));
 																	CheckAvailability checkAvailability=new CheckAvailability(boe.getBookName());
-																	//System.out.println(super.getName()+" want to check availability of "+boe.getBookName()+" for "+boe.getCustomer().getName());
 																	Future<Integer> futureAvailability=sendEvent(checkAvailability);
 																	if(futureAvailability!=null)  // checks if InventorySrevice unregistered himself
 																	{
@@ -52,25 +48,20 @@ public class SellingService extends MicroService {
 																		{
 
 																		if(avilablity!=-1) {
-																			//System.out.println(boe.getBookName()+" is available for "+boe.getCustomer().getName());
 																			Customer customerToCharge=boe.getCustomer();
 																			int price=avilablity;
 																			boolean CanBeCharged=customerToCharge.canChargeCreditCard(price);
 																			if(CanBeCharged) {
-																				//System.out.println(boe.getCustomer().getName()+" can be charged (for taking "+boe.getBookName()+")");
 																				OrderResult takeOrder=Inventory.getInstance().take(boe.getBookName());
 																				if(takeOrder==OrderResult.SUCCESSFULLY_TAKEN) //book is available+canBeCharged+successfully_taken
 																				{
 																					moneyRegister.chargeCreditCard(customerToCharge,avilablity);
-																					//System.out.println(boe.getCustomer().getName()+" successfully taken "+boe.getBookName());
 																					OrderReceipt newOrderReceipt=new OrderReceipt(boe.getBookName(),price,customerToCharge,getStartProcessTickTime(boe),getName(),boe.getEventTick(),curTick);
-																					System.out.println("receipt issued: "+boe.getBookName()+", "+boe.getCustomer().getName());
 																					moneyRegister.file(newOrderReceipt);
 																					customerToCharge.addOrderReceipt(newOrderReceipt);
 																					complete(boe,newOrderReceipt);
 																				}
 																				else {
-																					System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book not in stock right now ");
 																					complete(boe,null);
 																				}
 
@@ -78,12 +69,10 @@ public class SellingService extends MicroService {
 
 																			}
 																			else {
-																				System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> Customer doesn't have enough money in the credit ");
 																				complete(boe,null);
 																			}
 																		}
 																		else {
-																			System.out.println(getName()+" cannt sell "+boe.getBookName()+" to "+boe.getCustomer().getName()+" ---> The Book doesn't exist in the store ");
 																			complete(boe,null);
 																		}
 

@@ -31,7 +31,6 @@ public class InventoryService extends MicroService {
 		this.inventory=Inventory.getInstance();
 		subscribeEvent(CheckAvailability.class,(CheckAvailability checkAvailability)->{
 																						int available=inventory.checkAvailabiltyAndGetPrice(checkAvailability.getBookName());
-																						System.out.println("inventory service checks if" +checkAvailability.getBookName()+" exist in the store");
 																						complete(checkAvailability,available);});
 		subscribeBroadcast(TerminateBroadcast.class,(TerminateBroadcast)->{
 

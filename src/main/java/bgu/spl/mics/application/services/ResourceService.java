@@ -36,15 +36,12 @@ public class ResourceService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeEvent(AcquireVehicleEvent.class,(AcquireVehicleEvent event)-> {
-																				//System.out.println(super.getName()+" asking resources holder to acquire vehicle");
 																				Future<DeliveryVehicle> futureVehicle = resourcesHolder.acquireVehicle();
 																				complete(event,futureVehicle);});
 
 		subscribeEvent(ReleaseVehicleEvent.class,(ReleaseVehicleEvent event)-> {
-																				System.out.println(super.getName()+" releasing veichle "+event.getVehicle().getLicense());
 																				resourcesHolder.releaseVehicle(event.getVehicle());});
 		subscribeBroadcast(TerminateResourceService.class,(TerminateResourceService)->{
-			//System.out.println(getName()+" GOT IT");
 			terminate();});
 
 					countDownLatch.countDown();

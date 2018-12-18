@@ -48,7 +48,6 @@ public class ResourcesHolder implements Serializable {
 
 		Future<DeliveryVehicle> future=new Future<>();
 		synchronized (vehiclesResource) {
-			//System.out.println("resource holder trying to acquire vehicle");
 			if(!vehiclesResource.isEmpty()) {
 				DeliveryVehicle vehicle=vehiclesResource.poll();
 				future.resolve(vehicle);
@@ -67,7 +66,6 @@ public class ResourcesHolder implements Serializable {
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
 		synchronized (vehiclesResource) {
-			//System.out.println("resource holder trying to release vehicle");
 			if(!futureVehicles.isEmpty()) {
 				//get the future vehicles which waited the most
 				Future<DeliveryVehicle> futureVehicle=futureVehicles.poll();
@@ -76,7 +74,6 @@ public class ResourcesHolder implements Serializable {
 			else
 				vehiclesResource.add(vehicle);
 		}
-		//System.out.println("after release, free vehicles status: "+vehiclesResource.toString());
 	}
 	
 	/**

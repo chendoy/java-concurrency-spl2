@@ -20,7 +20,6 @@ public class Future<T> {
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		//objectResult.set(null);
 	}
 	
 	/**
@@ -41,7 +40,6 @@ public class Future<T> {
 	/**
      * Resolves the objectResult of this Future object.
      */
-	//synchronized necessary here??
 	public synchronized void resolve (T result) {
 		if(result==null) {
 			resolvedWithNull=true;
@@ -53,7 +51,6 @@ public class Future<T> {
 	/**
      * @return true if this object has been resolved, false otherwise
      */
-	//synchronized necessary here??
 	public boolean isDone() {
 		return !objectResult.compareAndSet(null,null);
 	}
